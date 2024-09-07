@@ -1,9 +1,8 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:report/report_form.dart';
 
 class TestScreen extends StatefulWidget {
@@ -15,8 +14,8 @@ class TestScreen extends StatefulWidget {
 
 class _TestScreenState extends State<TestScreen> {
   // Uint8List webImage = Uint8List(8);
-  File _file = File("zz");
-  Uint8List webImage = Uint8List(10);
+  File? webImage;
+  Uint8List? webImageUint8;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,11 +45,9 @@ class _TestScreenState extends State<TestScreen> {
               ],
             ),
             const SizedBox(height: 50),
-            (_file.path == "zz")
-                ? const Text("No image")
-                : (kIsWeb)
-                    ? Image.memory(webImage)
-                    : Image.file(_file),
+            webImageUint8 == null
+                ? Text("No image")
+                : Image.memory(webImageUint8!),
             const SizedBox(
               height: 20,
               width: double.infinity,
@@ -63,17 +60,16 @@ class _TestScreenState extends State<TestScreen> {
 
   Future<void> uploadImage() async {
     // WEB
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(type: FileType.image);
 
-    final ImagePicker picker = ImagePicker();
-    XFile? image = await picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      var f = await image.readAsBytes();
+    if (result != null) {
+      var f = await result.files.single.xFile.readAsBytes();
       setState(() {
-        _file = File("a");
-        webImage = f;
+        webImageUint8 = f;
       });
     } else {
-      print("No photo");
+      // User canceled the picker
     }
   }
 }
