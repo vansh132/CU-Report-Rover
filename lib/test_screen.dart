@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:report/report.dart';
 import 'package:report/report_form.dart';
 
 class TestScreen extends StatefulWidget {
@@ -51,6 +52,16 @@ class _TestScreenState extends State<TestScreen> {
             const SizedBox(
               height: 20,
               width: double.infinity,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ReportScreenMain()),
+                );
+              },
+              child: Text("Main Screen"),
             ),
           ],
         ),
