@@ -769,7 +769,7 @@ class _ReportFormState extends State<ReportForm> {
                                         height: 15,
                                       ),
                                       Text(
-                                        "Upload Activity Image",
+                                        "Upload Event Poster",
                                         style: TextStyle(
                                           fontSize: 15,
                                           color: Colors.grey.shade400,
@@ -1140,10 +1140,14 @@ class _ReportFormState extends State<ReportForm> {
               ],
             ),
             pw.SizedBox(height: height * 0.02),
-            pw.Text('Speaker/Guest/Presenter Details',
-                style:
-                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
-            pw.SizedBox(height: height * 0.02),
+            _speakerNameControllers.isEmpty
+                ? pw.SizedBox()
+                : pw.Text('Speaker/Guest/Presenter Details',
+                    style: pw.TextStyle(
+                        fontSize: 14, fontWeight: pw.FontWeight.bold)),
+            _speakerNameControllers.isEmpty
+                ? pw.SizedBox()
+                : pw.SizedBox(height: height * 0.02),
             ..._buildSpeakerDetailsPdf(),
             pw.SizedBox(height: height * 0.02),
             pw.Text('Participants Profile',
@@ -1191,9 +1195,11 @@ class _ReportFormState extends State<ReportForm> {
             ),
             pw.SizedBox(height: height * 0.02),
             _buildTextBlock('Event Report', _eventDescriptionController.text),
-            pw.Text('Speakers Profile',
-                style:
-                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+            _speakerNameControllers.isEmpty
+                ? pw.SizedBox()
+                : pw.Text('Speakers Profile',
+                    style: pw.TextStyle(
+                        fontSize: 14, fontWeight: pw.FontWeight.bold)),
             pw.SizedBox(height: 8),
             for (int i = 0; i < _speakerBioControllers.length; i++)
               pw.Column(
@@ -1216,35 +1222,6 @@ class _ReportFormState extends State<ReportForm> {
                   )
                 ],
               ),
-            // pw.Text('Geo Tagged Image',
-            //     style:
-            //         pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
-            // pw.SizedBox(height: 12),
-            // pw.Center(
-            //   child: pw.Image(geoPdfImage,
-            //       height: height * 0.3, width: width * 0.95),
-            // ),
-            // pw.SizedBox(height: 20),
-            // pw.Text('FeedBack Form Image',
-            //     style:
-            //         pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
-            // pw.SizedBox(height: 12),
-            // pw.Center(
-            //     child: pw.Image(feedbackPdfImage,
-            //         height: height * 0.3, width: width * 0.95)),
-            // pw.SizedBox(height: 20),
-            // pw.Text('Activity Image',
-            //     style:
-            //         pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
-            // pw.SizedBox(height: 12),
-            // pw.Center(
-            //     child: pw.Image(activityPdfImage,
-            //         height: height * 0.3, width: width * 0.95)),
-            // pw.SizedBox(height: 20),
-            // pw.Text('Event Poster',
-            //     style:
-            //         pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
-            // pw.Image(posterPdfImage),
           ];
         },
       ),
@@ -1311,7 +1288,6 @@ class _ReportFormState extends State<ReportForm> {
         },
       ),
     );
-
     // New page for Event Poster
     pdf.addPage(
       pw.Page(
