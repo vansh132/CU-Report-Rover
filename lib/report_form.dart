@@ -13,7 +13,7 @@ import 'package:printing/printing.dart';
 
 class ReportForm extends StatefulWidget {
   static const String routeName = '/event-report-screen';
-  const ReportForm();
+  const ReportForm({super.key});
 
   @override
   _ReportFormState createState() => _ReportFormState();
@@ -44,14 +44,15 @@ class _ReportFormState extends State<ReportForm> {
   final List<TextEditingController> _speakerTitleControllers = [];
   final List<TextEditingController> _speakerOrganizationControllers = [];
   final List<TextEditingController> _speakerBioControllers = [];
-  // final List<File> _speakerImages = [];
   XFile geoTaggedImage = XFile("");
   Uint8List? geoTaggedImageUnit8;
   XFile feedBackFormImage = XFile("");
   Uint8List? feedBackFormImageUnit8;
   XFile activityImage = XFile("");
   Uint8List? activityImageUnit8;
-  // File speakerImage = File("");
+  // speaker images
+  final List<Uint8List> _speakerImages = [];
+  XFile speakerImage = XFile("");
   // File eventPoster = File("");
 
   bool submitted = false;
@@ -159,28 +160,28 @@ class _ReportFormState extends State<ReportForm> {
     return image;
   }
 
-  // void clearSpeakerImage() {
-  //   setState(() {
-  //     speakerImage = File("");
-  //   });
-  // }
+  void clearSpeakerImage() {
+    setState(() {
+      speakerImage = XFile("");
+    });
+  }
 
-  // Future<File> pickSpeakerImages() async {
-  //   File image = File("");
-  //   try {
-  //     var files = await FilePicker.platform.pickFiles(
-  //       type: FileType.image,
-  //       allowMultiple: false,
-  //     );
+  Future<XFile> pickSpeakerImages() async {
+    XFile image = XFile("");
+    try {
+      var files = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        allowMultiple: false,
+      );
 
-  //     if (files != null && files.files.isNotEmpty) {
-  //       image = File(files.files[0].path!);
-  //     }
-  //   } catch (e) {
-  //     debugPrint(e.toString());
-  //   }
-  //   return image;
-  // }
+      if (files != null && files.files.isNotEmpty) {
+        image = files.files[0].xFile;
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return image;
+  }
 
   List<pw.Widget> _buildSpeakerDetailsPdf() {
     List<pw.Widget> widgets = [];
@@ -348,10 +349,8 @@ class _ReportFormState extends State<ReportForm> {
                     child: pw.Row(
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [
-                        // pw.Image(
-                        //     pw.MemoryImage(_speakerImages[i].readAsBytesSync()),
-                        //     height: 150,
-                        //     width: 150),
+                        pw.Image(pw.MemoryImage(_speakerImages[i]),
+                            height: 150, width: 150),
                         pw.SizedBox(width: width * 0.05),
                         pw.Expanded(
                           child: pw.Text(_speakerBioControllers[i].text,
@@ -523,6 +522,7 @@ class _ReportFormState extends State<ReportForm> {
             _buildTextField(
                 _eventDescriptionController, 'Event Description', true),
             ..._buildSpeakerDetails(),
+            // ..._buildSpeakerBios(),
             const SizedBox(height: 20),
             Center(
               child: ElevatedButton(
@@ -719,13 +719,64 @@ class _ReportFormState extends State<ReportForm> {
               _speakerTitleControllers[i], 'Presentation Title', false),
           _buildTextField(
               _speakerOrganizationControllers[i], 'Organization', false),
-          ..._buildSpeakerBios(),
+
+          // Speaker Bio section
+          const SizedBox(height: 20),
+          Text('Speaker ${i + 1} Bio',
+              style: const TextStyle(fontWeight: FontWeight.bold)),
+          if (_speakerImages.length > i)
+            Center(
+              child: SizedBox(
+                height: 200,
+                width: 200,
+                child: Image.memory(_speakerImages[i]),
+              ),
+            )
+          else
+            GestureDetector(
+              onTap: () => selectSpeakerImage(i),
+              child: DottedBorder(
+                radius: const Radius.circular(10),
+                dashPattern: const [10, 4],
+                borderType: BorderType.RRect,
+                strokeCap: StrokeCap.round,
+                child: Container(
+                  width: double.infinity,
+                  height: 150,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.folder_open_outlined,
+                        size: 40,
+                      ),
+                      const SizedBox(height: 15),
+                      Text(
+                        "Upload Speaker Image",
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.grey.shade400,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          _buildTextField(_speakerBioControllers[i], 'Speaker Bio', true),
+
+          // Remove Speaker button
           Center(
             child: ElevatedButton(
               onPressed: () => _removeSpeaker(i),
               child: Text('Remove Speaker ${i + 1}'),
             ),
           ),
+          const SizedBox(height: 20),
         ],
       ));
     }
@@ -740,51 +791,51 @@ class _ReportFormState extends State<ReportForm> {
         children: [
           Text('Speaker ${i + 1} Bio',
               style: const TextStyle(fontWeight: FontWeight.bold)),
-          // if (_speakerImages.length > i && _speakerImages[i].existsSync())
-          //   Center(
-          //     child: SizedBox(
-          //       height: 200,
-          //       width: 200,
-          //       child: Image.file(_speakerImages[i]),
-          //     ),
-          //   )
-          // else
-          //   GestureDetector(
-          //     onTap: () => selectSpeakerImage(i),
-          //     child: DottedBorder(
-          //       radius: const Radius.circular(10),
-          //       dashPattern: const [10, 4],
-          //       borderType: BorderType.RRect,
-          //       strokeCap: StrokeCap.round,
-          //       child: Container(
-          //         width: double.infinity,
-          //         height: 150,
-          //         decoration: BoxDecoration(
-          //           borderRadius: BorderRadius.circular(10),
-          //         ),
-          //         child: Column(
-          //           mainAxisAlignment: MainAxisAlignment.center,
-          //           crossAxisAlignment: CrossAxisAlignment.center,
-          //           children: [
-          //             const Icon(
-          //               Icons.folder_open_outlined,
-          //               size: 40,
-          //             ),
-          //             const SizedBox(
-          //               height: 15,
-          //             ),
-          //             Text(
-          //               "Upload Speaker Image",
-          //               style: TextStyle(
-          //                 fontSize: 15,
-          //                 color: Colors.grey.shade400,
-          //               ),
-          //             )
-          //           ],
-          //         ),
-          //       ),
-          //     ),
-          //   ),
+          if (_speakerImages.length > i)
+            Center(
+              child: SizedBox(
+                height: 200,
+                width: 200,
+                child: Image.memory(_speakerImages[i]),
+              ),
+            )
+          else
+            GestureDetector(
+              onTap: () => selectSpeakerImage(i),
+              child: DottedBorder(
+                radius: const Radius.circular(10),
+                dashPattern: const [10, 4],
+                borderType: BorderType.RRect,
+                strokeCap: StrokeCap.round,
+                child: Container(
+                  width: double.infinity,
+                  height: 150,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.folder_open_outlined,
+                        size: 40,
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      Text(
+                        "Upload Speaker Image",
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.grey.shade400,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
           _buildTextField(_speakerBioControllers[i], 'Speaker Bio', true),
         ],
       ));
@@ -792,16 +843,17 @@ class _ReportFormState extends State<ReportForm> {
     return widgets;
   }
 
-  // void selectSpeakerImage(int index) async {
-  //   var res = await pickSpeakerImages();
-  //   setState(() {
-  //     if (_speakerImages.length > index) {
-  //       _speakerImages[index] = res;
-  //     } else {
-  //       _speakerImages.add(res);
-  //     }
-  //   });
-  // }
+  void selectSpeakerImage(int index) async {
+    var res = await pickSpeakerImages();
+    var convertedImage = await res.readAsBytes();
+    setState(() {
+      if (_speakerImages.length > index) {
+        _speakerImages[index] = convertedImage;
+      } else {
+        _speakerImages.add(convertedImage);
+      }
+    });
+  }
 
   Widget _buildTextField(
       TextEditingController controller, String labelText, bool maxlines) {

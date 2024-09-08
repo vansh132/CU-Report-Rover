@@ -46,7 +46,7 @@ class _TestScreenState extends State<TestScreen> {
             ),
             const SizedBox(height: 50),
             webImageUint8 == null
-                ? Text("No image")
+                ? const Text("No image")
                 : Image.memory(webImageUint8!),
             const SizedBox(
               height: 20,
