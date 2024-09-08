@@ -1,10 +1,6 @@
-import 'dart:convert';
-import 'dart:io';
-import 'package:http/http.dart' as http;
 import 'dart:typed_data';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:image_picker/image_picker.dart';
-import 'model/eventReport.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
@@ -492,7 +488,6 @@ class _ReportFormState extends State<ReportForm> {
 
   @override
   Widget build(BuildContext context) {
-    print(geoTaggedImage.name);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Event Report'),
@@ -522,7 +517,6 @@ class _ReportFormState extends State<ReportForm> {
             _buildTextField(
                 _eventDescriptionController, 'Event Description', true),
             ..._buildSpeakerDetails(),
-            // ..._buildSpeakerBios(),
             const SizedBox(height: 20),
             Center(
               child: ElevatedButton(
@@ -777,66 +771,6 @@ class _ReportFormState extends State<ReportForm> {
             ),
           ),
           const SizedBox(height: 20),
-        ],
-      ));
-    }
-    return widgets;
-  }
-
-  List<Widget> _buildSpeakerBios() {
-    List<Widget> widgets = [];
-    for (int i = 0; i < _speakerBioControllers.length; i++) {
-      widgets.add(Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Speaker ${i + 1} Bio',
-              style: const TextStyle(fontWeight: FontWeight.bold)),
-          if (_speakerImages.length > i)
-            Center(
-              child: SizedBox(
-                height: 200,
-                width: 200,
-                child: Image.memory(_speakerImages[i]),
-              ),
-            )
-          else
-            GestureDetector(
-              onTap: () => selectSpeakerImage(i),
-              child: DottedBorder(
-                radius: const Radius.circular(10),
-                dashPattern: const [10, 4],
-                borderType: BorderType.RRect,
-                strokeCap: StrokeCap.round,
-                child: Container(
-                  width: double.infinity,
-                  height: 150,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.folder_open_outlined,
-                        size: 40,
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        "Upload Speaker Image",
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.grey.shade400,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          _buildTextField(_speakerBioControllers[i], 'Speaker Bio', true),
         ],
       ));
     }
