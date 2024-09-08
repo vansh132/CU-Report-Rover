@@ -305,220 +305,6 @@ class _ReportFormState extends State<ReportForm> {
   //   }
   // }
 
-  void _generatePdf(BuildContext context) async {
-    var height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;
-    final pdf = pw.Document();
-
-    // Load the image file
-    final Uint8List geoImageBytes = await geoTaggedImage.readAsBytes();
-    final pw.MemoryImage geoPdfImage = pw.MemoryImage(geoImageBytes);
-
-    final Uint8List feedbackImageBytes = await feedBackFormImage.readAsBytes();
-    final pw.MemoryImage feedbackPdfImage = pw.MemoryImage(feedbackImageBytes);
-
-    final Uint8List activityImageBytes = await activityImage.readAsBytes();
-    final pw.MemoryImage activityPdfImage = pw.MemoryImage(activityImageBytes);
-
-    final Uint8List posterImageBytes = await eventPosterImage.readAsBytes();
-    final pw.MemoryImage posterPdfImage = pw.MemoryImage(posterImageBytes);
-
-    // Update with actual image URL
-    // final String imageUrl = eventReport.poster; NOTE: Commented
-
-    // Download the image
-    // final Uint8List posterImageBytes = await _downloadImage(imageUrl); NOTE: Commented
-    // final pw.MemoryImage posterPdfImage = pw.MemoryImage(posterImageBytes); NOTE: Commented
-
-    pdf.addPage(
-      pw.MultiPage(
-        pageFormat: PdfPageFormat.a4,
-        build: (pw.Context context) {
-          return [
-            pw.Center(
-              child: pw.Column(
-                children: [
-                  pw.Text(schoolValueListenable.value!,
-                      style: pw.TextStyle(
-                          fontSize: 16, fontWeight: pw.FontWeight.bold)),
-                  pw.Text(departmentValueListenable.value!,
-                      style: pw.TextStyle(
-                          fontSize: 14, fontWeight: pw.FontWeight.bold)),
-                  pw.Text('CHRIST (Deemed to be University), Bangalore',
-                      style: pw.TextStyle(
-                          fontSize: 12, fontWeight: pw.FontWeight.bold)),
-                  pw.SizedBox(height: 8),
-                  pw.Text('Activity Report',
-                      style: pw.TextStyle(
-                          fontSize: 18, fontWeight: pw.FontWeight.bold)),
-                ],
-              ),
-            ),
-            pw.SizedBox(height: height * 0.02),
-            pw.Text('General Information',
-                style:
-                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
-            pw.SizedBox(height: height * 0.01),
-            pw.Table(
-              border: pw.TableBorder.all(),
-              children: [
-                _buildTableRow(
-                  'Type of Activity',
-                  eventTypeValueListenable.value!,
-                ),
-                _buildTableRow('Title of the Activity', _titleController.text),
-                _buildTableRow('Date/s', _dateController.text),
-                _buildTableRow('Time', _timeController.text),
-                _buildTableRow('Venue', _venueController.text),
-              ],
-            ),
-            pw.SizedBox(height: height * 0.02),
-            pw.Text('Speaker/Guest/Presenter Details',
-                style:
-                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
-            pw.SizedBox(height: height * 0.02),
-            ..._buildSpeakerDetailsPdf(),
-            pw.SizedBox(height: height * 0.02),
-            pw.Text('Participants Profile',
-                style:
-                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
-            pw.SizedBox(height: height * 0.01),
-            pw.Table(
-              border: pw.TableBorder.all(),
-              children: [
-                _buildTableRow('Type of Participants',
-                    participantTypeValueListenable.value!),
-                _buildTableRow(
-                    'No. of Participants', _noOfParticipantsController.text),
-              ],
-            ),
-            pw.SizedBox(height: height * 0.02),
-            pw.Text('Synopsis of the Activity (Description)',
-                style:
-                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
-            pw.SizedBox(height: height * 0.02),
-            pw.Table(
-              border: pw.TableBorder.all(),
-              children: [
-                _buildTableRow(
-                    'Highlights of Activity', _highlightsController.text),
-                _buildTableRow('Key Takeaways', _keyTakeawaysController.text),
-                _buildTableRow('Summary Of Activity', _summaryController.text),
-                _buildTableRow(
-                    'Follow-up Plan, if any', _followUpController.text),
-              ],
-            ),
-            pw.SizedBox(height: height * 0.03),
-            pw.Text('Rapporteur',
-                style:
-                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
-            pw.SizedBox(height: 8),
-            pw.Table(
-              border: pw.TableBorder.all(),
-              children: [
-                _buildTableRow(
-                    'Rapporteur Name', _rapporteurNameController.text),
-                _buildTableRow(
-                    'Rapporteur Email', _rapporteurEmailController.text),
-              ],
-            ),
-            pw.SizedBox(height: height * 0.02),
-            _buildTextBlock('Event Report', _eventDescriptionController.text),
-            pw.Text('Speakers Profile',
-                style:
-                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
-            pw.SizedBox(height: 8),
-            for (int i = 0; i < _speakerBioControllers.length; i++)
-              pw.Column(
-                crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
-                  pw.Container(
-                    width: double.infinity,
-                    child: pw.Row(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Image(pw.MemoryImage(_speakerImages[i]),
-                            height: 150, width: 150),
-                        pw.SizedBox(width: width * 0.05),
-                        pw.Expanded(
-                          child: pw.Text(_speakerBioControllers[i].text,
-                              textAlign: pw.TextAlign.justify),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            pw.Text('Geo Tagged Image',
-                style:
-                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
-            pw.SizedBox(height: 12),
-            pw.Center(
-              child: pw.Image(geoPdfImage,
-                  height: height * 0.3, width: width * 0.95),
-            ),
-            pw.SizedBox(height: 20),
-            pw.Text('FeedBack Form Image',
-                style:
-                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
-            pw.SizedBox(height: 12),
-            pw.Center(
-                child: pw.Image(feedbackPdfImage,
-                    height: height * 0.3, width: width * 0.95)),
-            pw.SizedBox(height: 20),
-            pw.Text('Activity Image',
-                style:
-                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
-            pw.SizedBox(height: 12),
-            pw.Center(
-                child: pw.Image(activityPdfImage,
-                    height: height * 0.3, width: width * 0.95)),
-            pw.SizedBox(height: 20),
-            pw.Text('Event Poster',
-                style:
-                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
-            pw.Image(posterPdfImage),
-          ];
-        },
-      ),
-    );
-
-    await Printing.layoutPdf(
-      onLayout: (PdfPageFormat format) async => pdf.save(),
-    );
-  }
-
-  pw.TableRow _buildTableRow(String label, String value) {
-    return pw.TableRow(
-      children: [
-        pw.Container(
-          width: MediaQuery.of(context).size.width * 0.3,
-          padding: const pw.EdgeInsets.all(4),
-          child: pw.Text(label,
-              style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-        ),
-        pw.Container(
-          width: MediaQuery.of(context).size.width * 0.7,
-          padding: const pw.EdgeInsets.all(4),
-          child: pw.Text(value, textAlign: pw.TextAlign.justify),
-        ),
-      ],
-    );
-  }
-
-  pw.Widget _buildTextBlock(String title, String content) {
-    return pw.Column(
-      crossAxisAlignment: pw.CrossAxisAlignment.start,
-      children: [
-        pw.Text(title,
-            style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
-        pw.SizedBox(height: 8),
-        pw.Text(content, textAlign: pw.TextAlign.justify),
-        pw.SizedBox(height: 16),
-      ],
-    );
-  }
-
   @override
   void dispose() {
     _departmentController.dispose();
@@ -1253,5 +1039,219 @@ class _ReportFormState extends State<ReportForm> {
 
   Widget customeSpace() {
     return const Gap(20);
+  }
+
+  pw.TableRow _buildTableRow(String label, String value) {
+    return pw.TableRow(
+      children: [
+        pw.Container(
+          width: MediaQuery.of(context).size.width * 0.3,
+          padding: const pw.EdgeInsets.all(4),
+          child: pw.Text(label,
+              style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+        ),
+        pw.Container(
+          width: MediaQuery.of(context).size.width * 0.7,
+          padding: const pw.EdgeInsets.all(4),
+          child: pw.Text(value, textAlign: pw.TextAlign.justify),
+        ),
+      ],
+    );
+  }
+
+  pw.Widget _buildTextBlock(String title, String content) {
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Text(title,
+            style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+        pw.SizedBox(height: 8),
+        pw.Text(content, textAlign: pw.TextAlign.justify),
+        pw.SizedBox(height: 16),
+      ],
+    );
+  }
+
+  void _generatePdf(BuildContext context) async {
+    var height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
+    final pdf = pw.Document();
+
+    // Load the image file
+    final Uint8List geoImageBytes = await geoTaggedImage.readAsBytes();
+    final pw.MemoryImage geoPdfImage = pw.MemoryImage(geoImageBytes);
+
+    final Uint8List feedbackImageBytes = await feedBackFormImage.readAsBytes();
+    final pw.MemoryImage feedbackPdfImage = pw.MemoryImage(feedbackImageBytes);
+
+    final Uint8List activityImageBytes = await activityImage.readAsBytes();
+    final pw.MemoryImage activityPdfImage = pw.MemoryImage(activityImageBytes);
+
+    final Uint8List posterImageBytes = await eventPosterImage.readAsBytes();
+    final pw.MemoryImage posterPdfImage = pw.MemoryImage(posterImageBytes);
+
+    // Update with actual image URL
+    // final String imageUrl = eventReport.poster; NOTE: Commented
+
+    // Download the image
+    // final Uint8List posterImageBytes = await _downloadImage(imageUrl); NOTE: Commented
+    // final pw.MemoryImage posterPdfImage = pw.MemoryImage(posterImageBytes); NOTE: Commented
+
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        build: (pw.Context context) {
+          return [
+            pw.Center(
+              child: pw.Column(
+                children: [
+                  pw.Text(schoolValueListenable.value!,
+                      style: pw.TextStyle(
+                          fontSize: 16, fontWeight: pw.FontWeight.bold)),
+                  pw.Text(departmentValueListenable.value!,
+                      style: pw.TextStyle(
+                          fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                  pw.Text('CHRIST (Deemed to be University), Bangalore',
+                      style: pw.TextStyle(
+                          fontSize: 12, fontWeight: pw.FontWeight.bold)),
+                  pw.SizedBox(height: 8),
+                  pw.Text('Activity Report',
+                      style: pw.TextStyle(
+                          fontSize: 18, fontWeight: pw.FontWeight.bold)),
+                ],
+              ),
+            ),
+            pw.SizedBox(height: height * 0.02),
+            pw.Text('General Information',
+                style:
+                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+            pw.SizedBox(height: height * 0.01),
+            pw.Table(
+              border: pw.TableBorder.all(),
+              children: [
+                _buildTableRow(
+                  'Type of Activity',
+                  eventTypeValueListenable.value!,
+                ),
+                _buildTableRow('Title of the Activity', _titleController.text),
+                _buildTableRow('Date/s', _dateController.text),
+                _buildTableRow('Time', _timeController.text),
+                _buildTableRow('Venue', _venueController.text),
+              ],
+            ),
+            pw.SizedBox(height: height * 0.02),
+            pw.Text('Speaker/Guest/Presenter Details',
+                style:
+                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+            pw.SizedBox(height: height * 0.02),
+            ..._buildSpeakerDetailsPdf(),
+            pw.SizedBox(height: height * 0.02),
+            pw.Text('Participants Profile',
+                style:
+                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+            pw.SizedBox(height: height * 0.01),
+            pw.Table(
+              border: pw.TableBorder.all(),
+              children: [
+                _buildTableRow('Type of Participants',
+                    participantTypeValueListenable.value!),
+                _buildTableRow(
+                    'No. of Participants', _noOfParticipantsController.text),
+              ],
+            ),
+            pw.SizedBox(height: height * 0.02),
+            pw.Text('Synopsis of the Activity (Description)',
+                style:
+                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+            pw.SizedBox(height: height * 0.02),
+            pw.Table(
+              border: pw.TableBorder.all(),
+              children: [
+                _buildTableRow(
+                    'Highlights of Activity', _highlightsController.text),
+                _buildTableRow('Key Takeaways', _keyTakeawaysController.text),
+                _buildTableRow('Summary Of Activity', _summaryController.text),
+                _buildTableRow(
+                    'Follow-up Plan, if any', _followUpController.text),
+              ],
+            ),
+            pw.SizedBox(height: height * 0.03),
+            pw.Text('Rapporteur',
+                style:
+                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+            pw.SizedBox(height: 8),
+            pw.Table(
+              border: pw.TableBorder.all(),
+              children: [
+                _buildTableRow(
+                    'Rapporteur Name', _rapporteurNameController.text),
+                _buildTableRow(
+                    'Rapporteur Email', _rapporteurEmailController.text),
+              ],
+            ),
+            pw.SizedBox(height: height * 0.02),
+            _buildTextBlock('Event Report', _eventDescriptionController.text),
+            pw.Text('Speakers Profile',
+                style:
+                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+            pw.SizedBox(height: 8),
+            for (int i = 0; i < _speakerBioControllers.length; i++)
+              pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.Container(
+                    width: double.infinity,
+                    child: pw.Row(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Image(pw.MemoryImage(_speakerImages[i]),
+                            height: 150, width: 150),
+                        pw.SizedBox(width: width * 0.05),
+                        pw.Expanded(
+                          child: pw.Text(_speakerBioControllers[i].text,
+                              textAlign: pw.TextAlign.justify),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            pw.Text('Geo Tagged Image',
+                style:
+                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+            pw.SizedBox(height: 12),
+            pw.Center(
+              child: pw.Image(geoPdfImage,
+                  height: height * 0.3, width: width * 0.95),
+            ),
+            pw.SizedBox(height: 20),
+            pw.Text('FeedBack Form Image',
+                style:
+                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+            pw.SizedBox(height: 12),
+            pw.Center(
+                child: pw.Image(feedbackPdfImage,
+                    height: height * 0.3, width: width * 0.95)),
+            pw.SizedBox(height: 20),
+            pw.Text('Activity Image',
+                style:
+                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+            pw.SizedBox(height: 12),
+            pw.Center(
+                child: pw.Image(activityPdfImage,
+                    height: height * 0.3, width: width * 0.95)),
+            pw.SizedBox(height: 20),
+            pw.Text('Event Poster',
+                style:
+                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+            pw.Image(posterPdfImage),
+          ];
+        },
+      ),
+    );
+
+    await Printing.layoutPdf(
+      onLayout: (PdfPageFormat format) async => pdf.save(),
+    );
   }
 }
