@@ -113,6 +113,34 @@ class AppTheme {
           ),
         ),
       ),
+      // DropdownMenu Theme
+      dropdownMenuTheme: DropdownMenuThemeData(
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: color.white,
+          labelStyle: TextStyle(color: color.primary),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: color.primary, width: 1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: color.primary, width: 2),
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+        textStyle: GoogleFonts.publicSans(
+          fontSize: 16,
+          color: color.richBlack,
+        ),
+        menuStyle: MenuStyle(
+          backgroundColor: WidgetStateProperty.all(color.white),
+          shape: WidgetStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
