@@ -408,17 +408,17 @@ class _ReportFormState extends State<ReportForm> {
                           hintText: "Select School",
                           validationMessage: "Please select your school"),
                     ),
+                    const SizedBox(
+                      width: 24,
+                    ),
+                    Expanded(
+                      child: buildDropdownButtonFormField(
+                          options: departments,
+                          selectedValue: departmentValueListenable,
+                          hintText: "Select Department",
+                          validationMessage: "Please select your department"),
+                    ),
                   ],
-                ),
-                const SizedBox(
-                  width: 24,
-                ),
-                Expanded(
-                  child: buildDropdownButtonFormField(
-                      options: departments,
-                      selectedValue: departmentValueListenable,
-                      hintText: "Select Department",
-                      validationMessage: "Please select your department"),
                 ),
                 customeSpace(height: 20),
                 const Divider(),
