@@ -1377,18 +1377,22 @@ class _ReportFormState extends State<ReportForm> {
     pdf.addPage(
       pw.Page(
         build: (pw.Context context) {
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Text('Geo Tagged Image',
-                  style: pw.TextStyle(
-                      fontSize: 14, fontWeight: pw.FontWeight.bold)),
-              pw.SizedBox(height: 12),
-              pw.Center(
-                child: pw.Image(geoPdfImage,
-                    height: height * 0.5, width: width * 0.7),
-              ),
-            ],
+          return pw.Padding(
+            padding: pw.EdgeInsets.all(20),
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text('Geo Tagged Image',
+                    style: pw.TextStyle(
+                        fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                pw.SizedBox(height: 12),
+                pw.Center(
+                  child: pw.Image(
+                    geoPdfImage,
+                  ),
+                ),
+              ],
+            ),
           );
         },
       ),
@@ -1406,8 +1410,9 @@ class _ReportFormState extends State<ReportForm> {
                       fontSize: 14, fontWeight: pw.FontWeight.bold)),
               pw.SizedBox(height: 12),
               pw.Center(
-                child: pw.Image(feedbackPdfImage,
-                    height: height * 0.5, width: width * 0.8),
+                child: pw.Image(
+                  feedbackPdfImage,
+                ),
               ),
             ],
           );
@@ -1427,15 +1432,16 @@ class _ReportFormState extends State<ReportForm> {
                       fontSize: 14, fontWeight: pw.FontWeight.bold)),
               pw.SizedBox(height: 12),
               pw.Center(
-                child: pw.Image(activityPdfImage,
-                    height: height * 0.5, width: width * 0.8),
+                child: pw.Image(
+                  activityPdfImage,
+                ),
               ),
             ],
           );
         },
       ),
     );
-    // New page for Event Poster
+
     // New page for Event Poster
     pdf.addPage(
       pw.Page(
