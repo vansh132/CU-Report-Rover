@@ -922,10 +922,10 @@ class _ReportFormState extends State<ReportForm> {
                       ),
                     ),
                     onPressed: () {
-                      // if (formKey.currentState!.validate()) {
+                      if (formKey.currentState!.validate()) {
+                        _generatePdf(context);
+                      }
                       // _generatePdf(context);
-                      // }
-                      _generatePdf(context);
                     },
                     child: const Text('Generate Report'),
                   ),
