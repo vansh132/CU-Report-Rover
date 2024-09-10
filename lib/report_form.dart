@@ -262,6 +262,7 @@ class _ReportFormState extends State<ReportForm> {
     } catch (e) {
       debugPrint(e.toString());
     }
+    print(image);
     return image;
   }
 
@@ -921,10 +922,10 @@ class _ReportFormState extends State<ReportForm> {
                       ),
                     ),
                     onPressed: () {
-                      if (formKey.currentState!.validate()) {
-                        _generatePdf(context);
-                      }
+                      // if (formKey.currentState!.validate()) {
                       // _generatePdf(context);
+                      // }
+                      _generatePdf(context);
                     },
                     child: const Text('Generate Report'),
                   ),
@@ -1385,7 +1386,7 @@ class _ReportFormState extends State<ReportForm> {
               pw.SizedBox(height: 12),
               pw.Center(
                 child: pw.Image(geoPdfImage,
-                    height: height * 0.5, width: width * 0.95),
+                    height: height * 0.5, width: width * 0.7),
               ),
             ],
           );
@@ -1406,7 +1407,7 @@ class _ReportFormState extends State<ReportForm> {
               pw.SizedBox(height: 12),
               pw.Center(
                 child: pw.Image(feedbackPdfImage,
-                    height: height * 0.5, width: width * 0.95),
+                    height: height * 0.5, width: width * 0.8),
               ),
             ],
           );
@@ -1427,7 +1428,7 @@ class _ReportFormState extends State<ReportForm> {
               pw.SizedBox(height: 12),
               pw.Center(
                 child: pw.Image(activityPdfImage,
-                    height: height * 0.5, width: width * 0.95),
+                    height: height * 0.5, width: width * 0.8),
               ),
             ],
           );
@@ -1435,24 +1436,26 @@ class _ReportFormState extends State<ReportForm> {
       ),
     );
     // New page for Event Poster
+    // New page for Event Poster
     pdf.addPage(
       pw.Page(
         build: (pw.Context context) {
           return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
               pw.Text('Event Poster',
+                  textAlign: pw.TextAlign.start,
                   style: pw.TextStyle(
                       fontSize: 14, fontWeight: pw.FontWeight.bold)),
               pw.SizedBox(height: 12),
               pw.Center(
-                child: pw.Image(posterPdfImage, width: width * 0.8),
+                child: pw.Image(posterPdfImage, height: 700),
               ),
             ],
           );
         },
       ),
     );
+
     await Printing.layoutPdf(
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
