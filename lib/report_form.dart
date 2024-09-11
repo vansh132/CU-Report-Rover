@@ -1387,10 +1387,14 @@ class _ReportFormState extends State<ReportForm> {
                         fontSize: 14, fontWeight: pw.FontWeight.bold)),
                 pw.SizedBox(height: 12),
                 pw.Center(
+                    child: pw.SizedBox(
+                  height: 350,
+                  width: 500,
                   child: pw.Image(
+                    fit: pw.BoxFit.fill,
                     geoPdfImage,
                   ),
-                ),
+                )),
               ],
             ),
           );
@@ -1410,10 +1414,14 @@ class _ReportFormState extends State<ReportForm> {
                       fontSize: 14, fontWeight: pw.FontWeight.bold)),
               pw.SizedBox(height: 12),
               pw.Center(
+                  child: pw.SizedBox(
+                height: 350,
+                width: 500,
                 child: pw.Image(
+                  fit: pw.BoxFit.fill,
                   feedbackPdfImage,
                 ),
-              ),
+              )),
             ],
           );
         },
@@ -1432,10 +1440,14 @@ class _ReportFormState extends State<ReportForm> {
                       fontSize: 14, fontWeight: pw.FontWeight.bold)),
               pw.SizedBox(height: 12),
               pw.Center(
+                  child: pw.SizedBox(
+                height: 350,
+                width: 500,
                 child: pw.Image(
+                  fit: pw.BoxFit.fill,
                   activityPdfImage,
                 ),
-              ),
+              )),
             ],
           );
         },
@@ -1454,8 +1466,14 @@ class _ReportFormState extends State<ReportForm> {
                       fontSize: 14, fontWeight: pw.FontWeight.bold)),
               pw.SizedBox(height: 12),
               pw.Center(
-                child: pw.Image(posterPdfImage, height: 700),
-              ),
+                  child: pw.SizedBox(
+                height: 600,
+                width: 500,
+                child: pw.Image(
+                  fit: pw.BoxFit.fill,
+                  posterPdfImage,
+                ),
+              )),
             ],
           );
         },
