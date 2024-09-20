@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
+import 'package:report/chatbot.dart';
 import 'package:report/theme/theme_ext.dart';
 
 class ReportForm extends StatefulWidget {
@@ -378,6 +379,17 @@ class _ReportFormState extends State<ReportForm> {
             .textTheme
             .titleLarge!
             .copyWith(color: appColors.white),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChatBotScreen(),
+            ),
+          );
+        },
+        child: Icon(Icons.add),
       ),
       body: SingleChildScrollView(
         // padding: const EdgeInsets.all(16.0),
