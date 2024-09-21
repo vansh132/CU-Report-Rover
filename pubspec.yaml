@@ -46,6 +46,7 @@ dependencies:
   uuid: ^4.5.0
   dash_chat_2: ^0.0.21
   flutter_gemini: ^2.0.5
+  line_icons: ^2.0.3
 
 dev_dependencies:
   flutter_test:

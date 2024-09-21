@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -389,7 +390,7 @@ class _ReportFormState extends State<ReportForm> {
             ),
           );
         },
-        child: Icon(Icons.add),
+        child: Icon(LineIcons.rocketChat),
       ),
       body: SingleChildScrollView(
         // padding: const EdgeInsets.all(16.0),
