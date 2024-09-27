@@ -1,14 +1,15 @@
+import 'dart:developer';
+
 import 'package:dotted_border/dotted_border.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:line_icons/line_icons.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
-import 'package:report/chatbot.dart';
 import 'package:report/theme/theme_ext.dart';
 
 class ReportForm extends StatefulWidget {
@@ -20,9 +21,13 @@ class ReportForm extends StatefulWidget {
 }
 
 class _ReportFormState extends State<ReportForm> {
+  final gemini = Gemini.instance;
+
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController _dateController = TextEditingController();
 
+  final TextEditingController _impactAnalysisController =
+      TextEditingController();
   final TextEditingController _departmentController = TextEditingController();
   final TextEditingController _typeController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
@@ -36,6 +41,8 @@ class _ReportFormState extends State<ReportForm> {
   final TextEditingController _keyTakeawaysController = TextEditingController();
   final TextEditingController _summaryController = TextEditingController();
   final TextEditingController _followUpController = TextEditingController();
+  final TextEditingController _eventDescriptionGeminiPromptController =
+      TextEditingController();
   final TextEditingController _rapporteurNameController =
       TextEditingController();
   final TextEditingController _rapporteurEmailController =
@@ -47,6 +54,7 @@ class _ReportFormState extends State<ReportForm> {
   final List<TextEditingController> _speakerTitleControllers = [];
   final List<TextEditingController> _speakerOrganizationControllers = [];
   final List<TextEditingController> _speakerBioControllers = [];
+
   XFile geoTaggedImage = XFile("");
   Uint8List? geoTaggedImageUnit8;
   XFile feedBackFormImage = XFile("");
@@ -59,6 +67,7 @@ class _ReportFormState extends State<ReportForm> {
   final List<Uint8List> _speakerImages = [];
   XFile speakerImage = XFile("");
   // File eventPoster = File("");
+  final List<Uint8List> _eventPosterForGemini = [];
 
   bool submitted = false;
 
@@ -213,7 +222,7 @@ class _ReportFormState extends State<ReportForm> {
   void selectPosterImage() async {
     var res = await eventPostersImage();
     var convertedImage = await res.readAsBytes();
-
+    _eventPosterForGemini.add(convertedImage);
     setState(() {
       eventPosterImage = res;
       eventPosterImageUnit8 = convertedImage;
@@ -308,6 +317,154 @@ class _ReportFormState extends State<ReportForm> {
   //   }
   // }
 
+  void extractEventDetails() async {
+    // retrieve highlights from image and data
+    await gemini.textAndImage(
+      text:
+          "Refer to the event poster and consider following information: Event type is ${eventTypeValueListenable.value}. Participant type: ${participantTypeValueListenable.value}. Number of participants: ${_noOfParticipantsController.text}. Event description: ${_eventDescriptionGeminiPromptController.text}. Please provide the event highlights in paragraph form as plain text.",
+      images: [_eventPosterForGemini.first],
+    ).then((value) {
+      _highlightsController.text = value?.content?.parts?.first.text ?? '';
+      log(value?.content?.parts?.last.text ?? '');
+    }).catchError(
+      (e) {
+        log('textAndImageInput', error: e);
+      },
+    );
+    // retrieve key take aways from image and data
+    await gemini.textAndImage(
+      text:
+          "Refer to the event poster and consider following information: Event type is ${eventTypeValueListenable.value}. Participant type: ${participantTypeValueListenable.value}. Number of participants: ${_noOfParticipantsController.text}. Event description: ${_eventDescriptionGeminiPromptController.text}. Please provide the event key take aways in paragraph form as plain text.",
+      images: [_eventPosterForGemini.first],
+    ).then((value) {
+      _keyTakeawaysController.text = value?.content?.parts?.first.text ?? '';
+      log(value?.content?.parts?.last.text ?? '');
+    }).catchError(
+      (e) {
+        log('textAndImageInput', error: e);
+      },
+    );
+    // retrieve summary from image and data
+    await gemini.textAndImage(
+      text:
+          "Refer to the event poster and consider following information: Event type is ${eventTypeValueListenable.value}. Participant type: ${participantTypeValueListenable.value}. Number of participants: ${_noOfParticipantsController.text}. Event description: ${_eventDescriptionGeminiPromptController.text}. Please provide the event summary in paragraph form as plain text.",
+      images: [_eventPosterForGemini.first],
+    ).then((value) {
+      _summaryController.text = value?.content?.parts?.first.text ?? '';
+      log(value?.content?.parts?.last.text ?? '');
+    }).catchError(
+      (e) {
+        log('textAndImageInput', error: e);
+      },
+    );
+    // retrieve follow up from image and data
+    await gemini.textAndImage(
+      text:
+          "Refer to the event poster and consider following information: Event type is ${eventTypeValueListenable.value}. Participant type: ${participantTypeValueListenable.value}. Number of participants: ${_noOfParticipantsController.text}. Event description: ${_eventDescriptionGeminiPromptController.text}. Please provide what kind of follow up can be done for this event in paragraph form as plain text.",
+      images: [_eventPosterForGemini.first],
+    ).then((value) {
+      _followUpController.text = value?.content?.parts?.first.text ?? '';
+      log(value?.content?.parts?.last.text ?? '');
+    }).catchError(
+      (e) {
+        log('textAndImageInput', error: e);
+      },
+    );
+    // retrieve impact analysis from image and data
+    await gemini.textAndImage(
+      text:
+          "Refer to the event poster and consider following information: Event type is ${eventTypeValueListenable.value}. Participant type: ${participantTypeValueListenable.value}. Number of participants: ${_noOfParticipantsController.text}. Event description: ${_eventDescriptionGeminiPromptController.text}. Please provide impact analysis of event in paragraph form as plain text.",
+      images: [_eventPosterForGemini.first],
+    ).then((value) {
+      _impactAnalysisController.text = value?.content?.parts?.first.text ?? '';
+      log(value?.content?.parts?.last.text ?? '');
+    }).catchError(
+      (e) {
+        log('textAndImageInput', error: e);
+      },
+    );
+    // retrieve event report brief description from image and data
+    await gemini.textAndImage(
+      text:
+          "Refer to the event poster and consider following information: Event type is ${eventTypeValueListenable.value}. Participant type: ${participantTypeValueListenable.value}. Number of participants: ${_noOfParticipantsController.text}. Event description: ${_eventDescriptionGeminiPromptController.text}. Please provide brief description of event report in paragraph which has atleast 70 words as plain text.",
+      images: [_eventPosterForGemini.first],
+    ).then((value) {
+      _eventDescriptionController.text =
+          value?.content?.parts?.first.text ?? '';
+      log(value?.content?.parts?.last.text ?? '');
+    }).catchError(
+      (e) {
+        log('textAndImageInput', error: e);
+      },
+    );
+  }
+
+  void extractBasicInformation() async {
+    // retrieve school from image
+    /* await gemini.textAndImage(
+                          text:
+                              "Which school has organised event in image? School of Science or School of Arts or other? give answer as plain text",
+                          images: [_eventPosterForGemini.first],
+                        ).then((value) {
+                          schoolValueListenable.value =
+                              value?.content?.parts?.first.text ?? '';
+                          log(value?.content?.parts?.last.text ?? '');
+                        }).catchError(
+                          (e) {
+                            log('textAndImageInput', error: e);
+                          },
+                        ); */
+    // retrieve title from image
+    await gemini.textAndImage(
+      text: "What is the title of event in image? give answer as plain text",
+      images: [_eventPosterForGemini.first],
+    ).then((value) {
+      _titleController.text = value?.content?.parts?.first.text ?? '';
+      log(value?.content?.parts?.last.text ?? '');
+    }).catchError(
+      (e) {
+        log('textAndImageInput', error: e);
+      },
+    );
+    // // retrieve venue from image
+    await gemini.textAndImage(
+      text: "What is the venue of event in image? give answer as plain text",
+      images: [_eventPosterForGemini.first],
+    ).then((value) {
+      _venueController.text = value?.content?.parts?.first.text ?? '';
+      log(value?.content?.parts?.last.text ?? '');
+    }).catchError(
+      (e) {
+        log('textAndImageInput', error: e);
+      },
+    );
+    // // retrieve date from image
+    await gemini.textAndImage(
+      text: "What is the date of event in image? give answer as plain text",
+      images: [_eventPosterForGemini.first],
+    ).then((value) {
+      _dateController.text = value?.content?.parts?.first.text ?? '';
+      log(value?.content?.parts?.last.text ?? '');
+    }).catchError(
+      (e) {
+        log('textAndImageInput', error: e);
+      },
+    );
+    // retrieve time from image
+    await gemini.textAndImage(
+      text:
+          "What is the only time of event and don't give date of event in image? give answer as plain text",
+      images: [_eventPosterForGemini.first],
+    ).then((value) {
+      _timeController.text = value?.content?.parts?.first.text ?? '';
+      log(value?.content?.parts?.last.text ?? '');
+    }).catchError(
+      (e) {
+        log('textAndImageInput', error: e);
+      },
+    );
+  }
+
   @override
   void dispose() {
     _departmentController.dispose();
@@ -371,6 +528,7 @@ class _ReportFormState extends State<ReportForm> {
   @override
   Widget build(BuildContext context) {
     final appColors = context.appColors;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: appColors.primary,
@@ -380,17 +538,6 @@ class _ReportFormState extends State<ReportForm> {
             .textTheme
             .titleLarge!
             .copyWith(color: appColors.white),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ChatBotScreen(),
-            ),
-          );
-        },
-        child: Icon(LineIcons.rocketChat),
       ),
       body: SingleChildScrollView(
         // padding: const EdgeInsets.all(16.0),
@@ -411,6 +558,102 @@ class _ReportFormState extends State<ReportForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // add event poster
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        children: [
+                          eventPosterImageUnit8 == null
+                              ? GestureDetector(
+                                  onTap: selectPosterImage,
+                                  child: DottedBorder(
+                                    radius: const Radius.circular(10),
+                                    dashPattern: const [10, 4],
+                                    borderType: BorderType.RRect,
+                                    strokeCap: StrokeCap.round,
+                                    child: Container(
+                                      width: double.infinity,
+                                      height: 150,
+                                      decoration: BoxDecoration(
+                                        // color: Colors.red,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          const Icon(
+                                            Icons.folder_open_outlined,
+                                            size: 40,
+                                          ),
+                                          const SizedBox(
+                                            height: 15,
+                                          ),
+                                          Text(
+                                            "Upload Event Poster",
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              color: Colors.grey.shade400,
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : Center(
+                                  child: Image.memory(
+                                    eventPosterImageUnit8!,
+                                    height: 300,
+                                    width: 300,
+                                  ),
+                                ),
+                          customeSpace(height: 12),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          //   children: [
+                          //     SizedBox(
+                          //       height: 44,
+                          //       width: 224,
+                          //       child: ElevatedButton.icon(
+                          //         onPressed: submitted == true
+                          //             ? null
+                          //             : clearPosterImage,
+                          //         label: const Text(
+                          //           "Clear",
+                          //         ),
+                          //         icon: const Icon(Icons.cancel_outlined),
+                          //       ),
+                          //     ),
+                          //   ],
+                          // ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                customeSpace(height: 12),
+                if (eventPosterImageUnit8 != null)
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: extractBasicInformation,
+                      child: const Text(
+                        "Analyze Event Poster",
+                      ),
+                    ),
+                  ),
+                customeSpace(height: 20),
+                const Divider(),
+                Center(
+                  child: Text(
+                    "General Details",
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                ),
+                customeSpace(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -433,15 +676,7 @@ class _ReportFormState extends State<ReportForm> {
                     ),
                   ],
                 ),
-                customeSpace(height: 20),
-                const Divider(),
-                customeSpace(height: 12),
-                Center(
-                  child: Text(
-                    "General Details",
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                ),
+
                 customeSpace(height: 12),
                 Row(
                   children: [
@@ -461,17 +696,17 @@ class _ReportFormState extends State<ReportForm> {
                 customeSpace(height: 8),
                 Row(
                   children: [
-                    Expanded(
-                      child: buildDropdownButtonFormField(
-                        options: events,
-                        selectedValue: eventTypeValueListenable,
-                        hintText: "Select Event Type",
-                        validationMessage: "Please Select event type",
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 24,
-                    ),
+                    // Expanded(
+                    //   child: buildDropdownButtonFormField(
+                    //     options: events,
+                    //     selectedValue: eventTypeValueListenable,
+                    //     hintText: "Select Event Type",
+                    //     validationMessage: "Please Select event type",
+                    //   ),
+                    // ),
+                    // const SizedBox(
+                    //   width: 24,
+                    // ),
                     Expanded(
                       child: buildDateFormField(context, 'Please select date'),
                     ),
@@ -486,10 +721,24 @@ class _ReportFormState extends State<ReportForm> {
                 customeSpace(height: 20),
                 Center(
                   child: Text(
-                    "Participant Details",
+                    "Event Details",
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
+                customeSpace(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: buildDropdownButtonFormField(
+                        options: events,
+                        selectedValue: eventTypeValueListenable,
+                        hintText: "Select Event Type",
+                        validationMessage: "Please Select event type",
+                      ),
+                    ),
+                  ],
+                ),
+
                 customeSpace(height: 12),
                 Row(
                   children: [
@@ -512,8 +761,28 @@ class _ReportFormState extends State<ReportForm> {
                     ),
                   ],
                 ),
+                customeSpace(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildTextField(
+                          _eventDescriptionGeminiPromptController,
+                          'Event Description',
+                          true,
+                          "Please enter Event Description"),
+                    ),
+                  ],
+                ),
                 customeSpace(
                   height: 20,
+                ),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: extractEventDetails,
+                    child: const Text(
+                      "Generate Synopsis Information",
+                    ),
+                  ),
                 ),
                 const Divider(),
                 customeSpace(
@@ -526,58 +795,95 @@ class _ReportFormState extends State<ReportForm> {
                   ),
                 ),
                 customeSpace(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildTextField(
-                        _highlightsController,
-                        'Event Highlights',
-                        true,
-                        "Please add event highlights",
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 12,
-                    ),
-                    Expanded(
-                      child: _buildTextField(
-                        _keyTakeawaysController,
-                        'Key Takeaways',
-                        true,
-                        "Please enter key takeaways",
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 12,
-                    ),
-                    Expanded(
-                      child: _buildTextField(
-                        _summaryController,
-                        'Event Summary',
-                        true,
-                        "Please enter event summary",
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 24,
-                    ),
-                    Expanded(
-                      child: _buildTextField(
-                        _followUpController,
-                        'Follow-Up',
-                        true,
-                        "Please enter follow-up",
-                      ),
-                    ),
-                  ],
-                ),
-                customeSpace(height: 4),
                 _buildTextField(
-                  _eventDescriptionController,
-                  'Event Report Brief Description',
+                  _highlightsController,
+                  'Highlights',
+                  true,
+                  "Please add event highlights",
+                ),
+                customeSpace(height: 8),
+                _buildTextField(
+                  _keyTakeawaysController,
+                  'Key Takeaways',
+                  true,
+                  "Please enter key takeaways",
+                ),
+                customeSpace(height: 8),
+                _buildTextField(
+                  _summaryController,
+                  'Summary',
+                  true,
+                  "Please enter event summary",
+                ),
+                customeSpace(height: 8),
+                _buildTextField(
+                  _followUpController,
+                  'Follow-Up',
+                  true,
+                  "Please enter follow-up",
+                ),
+                customeSpace(height: 8),
+                _buildTextField(
+                  _impactAnalysisController,
+                  'Impact Analysis',
                   true,
                   "Please add event report brief description",
                 ),
+                // delete below code
+                // Row(
+                //   children: [
+                //     Expanded(
+                //       child: _buildTextField(
+                //         _highlightsController,
+                //         'Event Highlights',
+                //         true,
+                //         "Please add event highlights",
+                //       ),
+                //     ),
+                //     const SizedBox(
+                //       width: 12,
+                //     ),
+                //     Expanded(
+                //       child: _buildTextField(
+                //         _keyTakeawaysController,
+                //         'Key Takeaways',
+                //         true,
+                //         "Please enter key takeaways",
+                //       ),
+                //     ),
+                //   ],
+                // ),
+                // customeSpace(height: 4),
+                // Row(
+                //   children: [
+                //     Expanded(
+                //       child: _buildTextField(
+                //         _summaryController,
+                //         'Event Summary',
+                //         true,
+                //         "Please enter event summary",
+                //       ),
+                //     ),
+                //     const SizedBox(
+                //       width: 12,
+                //     ),
+                //     Expanded(
+                //       child: _buildTextField(
+                //         _followUpController,
+                //         'Follow-Up',
+                //         true,
+                //         "Please enter follow-up",
+                //       ),
+                //     ),
+                //   ],
+                // ),
+                // customeSpace(height: 4),
+                // _buildTextField(
+                //   _eventDescriptionController,
+                //   'Event Report Brief Description',
+                //   true,
+                //   "Please add event report brief description",
+                // ),
                 customeSpace(height: 20),
                 const Divider(),
                 customeSpace(height: 12),
@@ -1391,7 +1697,7 @@ class _ReportFormState extends State<ReportForm> {
       pw.Page(
         build: (pw.Context context) {
           return pw.Padding(
-            padding: pw.EdgeInsets.all(20),
+            padding: const pw.EdgeInsets.all(20),
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
