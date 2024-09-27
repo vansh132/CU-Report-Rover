@@ -1643,6 +1643,8 @@ class _ReportFormState extends State<ReportForm> {
                 _buildTableRow('Summary Of Activity', _summaryController.text),
                 _buildTableRow(
                     'Follow-up Plan, if any', _followUpController.text),
+                _buildTableRow(
+                    'Impact Analysis', _impactAnalysisController.text)
               ],
             ),
             pw.SizedBox(height: height * 0.03),
