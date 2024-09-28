@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
-import 'package:report/report_form.dart';
-
+import 'package:get/get.dart';
+import 'package:report/auto_report.dart';
 import 'theme/app_theme.dart';
 
 void main() {
@@ -17,11 +17,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = AppTheme();
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: theme.light,
-      home: const ReportForm(),
+      home: const AutoReport(),
     );
   }
 }

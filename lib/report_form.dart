@@ -4,6 +4,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
+import 'package:get/route_manager.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -437,7 +438,7 @@ class _ReportFormState extends State<ReportForm> {
       log('Error in extracting event details', error: e);
     } finally {
       // Close the loading dialog once all operations are complete
-      Navigator.of(context).pop();
+      Get.back();
     }
   }
 
@@ -526,7 +527,7 @@ class _ReportFormState extends State<ReportForm> {
       log('Error during Gemini API call', error: e);
     } finally {
       // Hide loading dialog when all operations are complete
-      Navigator.of(context).pop(); // Closes the loading dialog
+      Get.back();
     }
   }
 
@@ -1245,6 +1246,14 @@ class _ReportFormState extends State<ReportForm> {
                     onPressed: () {
                       if (formKey.currentState!.validate()) {
                         _generatePdf(context);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              "Please fill all the required fields",
+                            ),
+                          ),
+                        );
                       }
                       // _generatePdf(context);
                     },

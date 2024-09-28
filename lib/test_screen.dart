@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:report/auto_report.dart';
 import 'package:report/image_text.dart';
 import 'package:report/report_form.dart';
 
@@ -67,6 +68,20 @@ class _TestScreenState extends State<TestScreen> {
                 );
               },
               child: const Text("Text-Image conversation"),
+            ),
+            const SizedBox(
+              height: 20,
+              width: double.infinity,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // navigate to the next screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AutoReport()),
+                );
+              },
+              child: const Text("Auto Report"),
             ),
           ],
         ),
