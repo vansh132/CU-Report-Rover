@@ -317,152 +317,226 @@ class _ReportFormState extends State<ReportForm> {
   //   }
   // }
 
-  void extractEventDetails() async {
-    // retrieve highlights from image and data
-    await gemini.textAndImage(
-      text:
-          "Refer to the event poster and consider following information: Event type is ${eventTypeValueListenable.value}. Participant type: ${participantTypeValueListenable.value}. Number of participants: ${_noOfParticipantsController.text}. Event description: ${_eventDescriptionGeminiPromptController.text}. Please provide the event highlights in paragraph form as plain text.",
-      images: [_eventPosterForGemini.first],
-    ).then((value) {
-      _highlightsController.text = value?.content?.parts?.first.text ?? '';
-      log(value?.content?.parts?.last.text ?? '');
-    }).catchError(
-      (e) {
-        log('textAndImageInput', error: e);
+  void extractEventDetails(BuildContext context) async {
+    // List of progress messages to show
+    List<String> progressMessages = [
+      "Generating highlights of event...",
+      "Generating key takeaways of event...",
+      "Generating summary of event...",
+      "Generating follow-up of event...",
+      "Generating impact analysis of event...",
+      "Generating brief of event..."
+    ];
+
+    // Function to update the dialog text
+    ValueNotifier<String> currentMessage = ValueNotifier(progressMessages[0]);
+
+    // Show loading dialog with dynamic text
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: ValueListenableBuilder<String>(
+            valueListenable: currentMessage,
+            builder: (context, value, child) {
+              return Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.9),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const CircularProgressIndicator(),
+                    const SizedBox(height: 20),
+                    Text(
+                      value,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
       },
     );
-    // retrieve key take aways from image and data
-    await gemini.textAndImage(
-      text:
-          "Refer to the event poster and consider following information: Event type is ${eventTypeValueListenable.value}. Participant type: ${participantTypeValueListenable.value}. Number of participants: ${_noOfParticipantsController.text}. Event description: ${_eventDescriptionGeminiPromptController.text}. Please provide the event key take aways in paragraph form as plain text.",
-      images: [_eventPosterForGemini.first],
-    ).then((value) {
-      _keyTakeawaysController.text = value?.content?.parts?.first.text ?? '';
-      log(value?.content?.parts?.last.text ?? '');
-    }).catchError(
-      (e) {
-        log('textAndImageInput', error: e);
-      },
-    );
-    // retrieve summary from image and data
-    await gemini.textAndImage(
-      text:
-          "Refer to the event poster and consider following information: Event type is ${eventTypeValueListenable.value}. Participant type: ${participantTypeValueListenable.value}. Number of participants: ${_noOfParticipantsController.text}. Event description: ${_eventDescriptionGeminiPromptController.text}. Please provide the event summary in paragraph form as plain text.",
-      images: [_eventPosterForGemini.first],
-    ).then((value) {
-      _summaryController.text = value?.content?.parts?.first.text ?? '';
-      log(value?.content?.parts?.last.text ?? '');
-    }).catchError(
-      (e) {
-        log('textAndImageInput', error: e);
-      },
-    );
-    // retrieve follow up from image and data
-    await gemini.textAndImage(
-      text:
-          "Refer to the event poster and consider following information: Event type is ${eventTypeValueListenable.value}. Participant type: ${participantTypeValueListenable.value}. Number of participants: ${_noOfParticipantsController.text}. Event description: ${_eventDescriptionGeminiPromptController.text}. Please provide what kind of follow up can be done for this event in paragraph form as plain text. Please give me in 50 words",
-      images: [_eventPosterForGemini.first],
-    ).then((value) {
-      _followUpController.text = value?.content?.parts?.first.text ?? '';
-      log(value?.content?.parts?.last.text ?? '');
-    }).catchError(
-      (e) {
-        log('textAndImageInput', error: e);
-      },
-    );
-    // retrieve impact analysis from image and data
-    await gemini.textAndImage(
-      text:
-          "Refer to the event poster and consider following information: Event type is ${eventTypeValueListenable.value}. Participant type: ${participantTypeValueListenable.value}. Number of participants: ${_noOfParticipantsController.text}. Event description: ${_eventDescriptionGeminiPromptController.text}. Follow Up Controller : ${_followUpController.text} Please provide impact analysis of event in paragraph form as plain text.",
-      images: [_eventPosterForGemini.first],
-    ).then((value) {
-      _impactAnalysisController.text = value?.content?.parts?.first.text ?? '';
-      log(value?.content?.parts?.last.text ?? '');
-    }).catchError(
-      (e) {
-        log('textAndImageInput', error: e);
-      },
-    );
-    // retrieve event report brief description from image and data
-    await gemini.textAndImage(
-      text:
-          "Refer to the event poster and consider following information: Event type is ${eventTypeValueListenable.value}. Participant type: ${participantTypeValueListenable.value}. Number of participants: ${_noOfParticipantsController.text}. Event description: ${_eventDescriptionGeminiPromptController.text}. Impact Analysis: ${_impactAnalysisController.text} Please give brief description of event report in long paragraph which has  1000 words as plain text.",
-      images: [_eventPosterForGemini.first],
-    ).then((value) {
-      _eventDescriptionController.text =
-          value?.content?.parts?.first.text ?? '';
-      log(value?.content?.parts?.last.text ?? '');
-    }).catchError(
-      (e) {
-        log('textAndImageInput', error: e);
-      },
-    );
+
+    try {
+      // Retrieve highlights from image and data
+      currentMessage.value = progressMessages[0];
+      await gemini.textAndImage(
+        text:
+            "Refer to the event poster and consider following information: Event type is ${eventTypeValueListenable.value}. Participant type: ${participantTypeValueListenable.value}. Number of participants: ${_noOfParticipantsController.text}. Event description: ${_eventDescriptionGeminiPromptController.text}. Please provide the event highlights in paragraph form as plain text.",
+        images: [_eventPosterForGemini.first],
+      ).then((value) {
+        _highlightsController.text = value?.content?.parts?.first.text ?? '';
+        log(value?.content?.parts?.last.text ?? '');
+      });
+
+      // Retrieve key takeaways from image and data
+      currentMessage.value = progressMessages[1];
+      await gemini.textAndImage(
+        text:
+            "Refer to the event poster and consider following information: Event type is ${eventTypeValueListenable.value}. Participant type: ${participantTypeValueListenable.value}. Number of participants: ${_noOfParticipantsController.text}. Event description: ${_eventDescriptionGeminiPromptController.text}. Please provide the event key takeaways in paragraph form as plain text.",
+        images: [_eventPosterForGemini.first],
+      ).then((value) {
+        _keyTakeawaysController.text = value?.content?.parts?.first.text ?? '';
+        log(value?.content?.parts?.last.text ?? '');
+      });
+
+      currentMessage.value = progressMessages[2];
+      // retrieve summary from image and data
+      await gemini.textAndImage(
+        text:
+            "Refer to the event poster and consider following information: Event type is ${eventTypeValueListenable.value}. Participant type: ${participantTypeValueListenable.value}. Number of participants: ${_noOfParticipantsController.text}. Event description: ${_eventDescriptionGeminiPromptController.text}. Please provide the event summary in paragraph form as plain text.",
+        images: [_eventPosterForGemini.first],
+      ).then((value) {
+        _summaryController.text = value?.content?.parts?.first.text ?? '';
+        log(value?.content?.parts?.last.text ?? '');
+      }).catchError(
+        (e) {
+          log('textAndImageInput', error: e);
+        },
+      );
+
+      // Retrieve follow-up from image and data
+      currentMessage.value = progressMessages[3];
+      await gemini.textAndImage(
+        text:
+            "Refer to the event poster and consider following information: Event type is ${eventTypeValueListenable.value}. Participant type: ${participantTypeValueListenable.value}. Number of participants: ${_noOfParticipantsController.text}. Event description: ${_eventDescriptionGeminiPromptController.text}. Please provide what kind of follow up can be done for this event in paragraph form as plain text. Please give me in 50 words",
+        images: [_eventPosterForGemini.first],
+      ).then((value) {
+        _followUpController.text = value?.content?.parts?.first.text ?? '';
+        log(value?.content?.parts?.last.text ?? '');
+      });
+
+      // Retrieve impact analysis from image and data
+      currentMessage.value = progressMessages[4];
+      await gemini.textAndImage(
+        text:
+            "Refer to the event poster and consider following information: Event type is ${eventTypeValueListenable.value}. Participant type: ${participantTypeValueListenable.value}. Number of participants: ${_noOfParticipantsController.text}. Event description: ${_eventDescriptionGeminiPromptController.text}. Please provide impact analysis of event in paragraph form as plain text.",
+        images: [_eventPosterForGemini.first],
+      ).then((value) {
+        _impactAnalysisController.text =
+            value?.content?.parts?.first.text ?? '';
+        log(value?.content?.parts?.last.text ?? '');
+      });
+
+      // Retrieve event report brief description
+      currentMessage.value = progressMessages[5];
+      await gemini.textAndImage(
+        text:
+            "Refer to the event poster and consider following information: Event type is ${eventTypeValueListenable.value}. Participant type: ${participantTypeValueListenable.value}. Number of participants: ${_noOfParticipantsController.text}. Event description: ${_eventDescriptionGeminiPromptController.text}. Please provide brief description of event report in paragraph which has 1000 words as plain text",
+        images: [_eventPosterForGemini.first],
+      ).then((value) {
+        _eventDescriptionController.text =
+            value?.content?.parts?.first.text ?? '';
+        log(value?.content?.parts?.last.text ?? '');
+      });
+    } catch (e) {
+      log('Error in extracting event details', error: e);
+    } finally {
+      // Close the loading dialog once all operations are complete
+      Navigator.of(context).pop();
+    }
   }
 
   void extractBasicInformation() async {
-    // retrieve school from image
-    /* await gemini.textAndImage(
-                          text:
-                              "Which school has organised event in image? School of Science or School of Arts or other? give answer as plain text",
-                          images: [_eventPosterForGemini.first],
-                        ).then((value) {
-                          schoolValueListenable.value =
-                              value?.content?.parts?.first.text ?? '';
-                          log(value?.content?.parts?.last.text ?? '');
-                        }).catchError(
-                          (e) {
-                            log('textAndImageInput', error: e);
-                          },
-                        ); */
-    // retrieve title from image
-    await gemini.textAndImage(
-      text: "What is the title of event in image? give answer as plain text",
-      images: [_eventPosterForGemini.first],
-    ).then((value) {
-      _titleController.text = value?.content?.parts?.first.text ?? '';
-      log(value?.content?.parts?.last.text ?? '');
-    }).catchError(
-      (e) {
-        log('textAndImageInput', error: e);
+    // Show loading dialog at the start
+    showDialog(
+      context: context,
+      barrierDismissible:
+          false, // Prevents closing the dialog by tapping outside
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor:
+              Colors.transparent, // Makes the dialog background transparent
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.9), // Light background color
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(), // Loading indicator
+                SizedBox(height: 20), // Space between the indicator and text
+                Text(
+                  "Analyzing event poster...",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87, // Text color
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
       },
     );
-    // // retrieve venue from image
-    await gemini.textAndImage(
-      text: "What is the venue of event in image? give answer as plain text",
-      images: [_eventPosterForGemini.first],
-    ).then((value) {
-      _venueController.text = value?.content?.parts?.first.text ?? '';
-      log(value?.content?.parts?.last.text ?? '');
-    }).catchError(
-      (e) {
+
+    try {
+      // Retrieve title from image
+      await gemini.textAndImage(
+        text: "What is the title of event in image? give answer as plain text",
+        images: [_eventPosterForGemini.first],
+      ).then((value) {
+        _titleController.text = value?.content?.parts?.first.text ?? '';
+        log(value?.content?.parts?.last.text ?? '');
+      }).catchError((e) {
         log('textAndImageInput', error: e);
-      },
-    );
-    // // retrieve date from image
-    await gemini.textAndImage(
-      text: "What is the date of event in image? give answer as plain text",
-      images: [_eventPosterForGemini.first],
-    ).then((value) {
-      _dateController.text = value?.content?.parts?.first.text ?? '';
-      log(value?.content?.parts?.last.text ?? '');
-    }).catchError(
-      (e) {
+      });
+
+      // Retrieve venue from image
+      await gemini.textAndImage(
+        text: "What is the venue of event in image? give answer as plain text",
+        images: [_eventPosterForGemini.first],
+      ).then((value) {
+        _venueController.text = value?.content?.parts?.first.text ?? '';
+        log(value?.content?.parts?.last.text ?? '');
+      }).catchError((e) {
         log('textAndImageInput', error: e);
-      },
-    );
-    // retrieve time from image
-    await gemini.textAndImage(
-      text:
-          "What is the only time of event and don't give date of event in image? give answer as plain text",
-      images: [_eventPosterForGemini.first],
-    ).then((value) {
-      _timeController.text = value?.content?.parts?.first.text ?? '';
-      log(value?.content?.parts?.last.text ?? '');
-    }).catchError(
-      (e) {
+      });
+
+      // Retrieve date from image
+      await gemini.textAndImage(
+        text: "What is the date of event in image? give answer as plain text",
+        images: [_eventPosterForGemini.first],
+      ).then((value) {
+        _dateController.text = value?.content?.parts?.first.text ?? '';
+        log(value?.content?.parts?.last.text ?? '');
+      }).catchError((e) {
         log('textAndImageInput', error: e);
-      },
-    );
+      });
+
+      // Retrieve time from image
+      await gemini.textAndImage(
+        text:
+            "What is the only time of event and don't give date of event in image? give answer as plain text",
+        images: [_eventPosterForGemini.first],
+      ).then((value) {
+        _timeController.text = value?.content?.parts?.first.text ?? '';
+        log(value?.content?.parts?.last.text ?? '');
+      }).catchError((e) {
+        log('textAndImageInput', error: e);
+      });
+    } catch (e) {
+      log('Error during Gemini API call', error: e);
+    } finally {
+      // Hide loading dialog when all operations are complete
+      Navigator.of(context).pop(); // Closes the loading dialog
+    }
   }
 
   @override
@@ -778,7 +852,9 @@ class _ReportFormState extends State<ReportForm> {
                 ),
                 Center(
                   child: ElevatedButton(
-                    onPressed: extractEventDetails,
+                    onPressed: () {
+                      extractEventDetails(context);
+                    },
                     child: const Text(
                       "Generate Synopsis Information",
                     ),
