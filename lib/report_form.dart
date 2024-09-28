@@ -360,7 +360,7 @@ class _ReportFormState extends State<ReportForm> {
     // retrieve follow up from image and data
     await gemini.textAndImage(
       text:
-          "Refer to the event poster and consider following information: Event type is ${eventTypeValueListenable.value}. Participant type: ${participantTypeValueListenable.value}. Number of participants: ${_noOfParticipantsController.text}. Event description: ${_eventDescriptionGeminiPromptController.text}. Please provide what kind of follow up can be done for this event in paragraph form as plain text.",
+          "Refer to the event poster and consider following information: Event type is ${eventTypeValueListenable.value}. Participant type: ${participantTypeValueListenable.value}. Number of participants: ${_noOfParticipantsController.text}. Event description: ${_eventDescriptionGeminiPromptController.text}. Please provide what kind of follow up can be done for this event in paragraph form as plain text. Please give me in 50 words",
       images: [_eventPosterForGemini.first],
     ).then((value) {
       _followUpController.text = value?.content?.parts?.first.text ?? '';
@@ -373,7 +373,7 @@ class _ReportFormState extends State<ReportForm> {
     // retrieve impact analysis from image and data
     await gemini.textAndImage(
       text:
-          "Refer to the event poster and consider following information: Event type is ${eventTypeValueListenable.value}. Participant type: ${participantTypeValueListenable.value}. Number of participants: ${_noOfParticipantsController.text}. Event description: ${_eventDescriptionGeminiPromptController.text}. Please provide impact analysis of event in paragraph form as plain text.",
+          "Refer to the event poster and consider following information: Event type is ${eventTypeValueListenable.value}. Participant type: ${participantTypeValueListenable.value}. Number of participants: ${_noOfParticipantsController.text}. Event description: ${_eventDescriptionGeminiPromptController.text}. Follow Up Controller : ${_followUpController.text} Please provide impact analysis of event in paragraph form as plain text.",
       images: [_eventPosterForGemini.first],
     ).then((value) {
       _impactAnalysisController.text = value?.content?.parts?.first.text ?? '';
@@ -386,7 +386,7 @@ class _ReportFormState extends State<ReportForm> {
     // retrieve event report brief description from image and data
     await gemini.textAndImage(
       text:
-          "Refer to the event poster and consider following information: Event type is ${eventTypeValueListenable.value}. Participant type: ${participantTypeValueListenable.value}. Number of participants: ${_noOfParticipantsController.text}. Event description: ${_eventDescriptionGeminiPromptController.text}. Please provide brief description of event report in paragraph which has atleast 70 words as plain text.",
+          "Refer to the event poster and consider following information: Event type is ${eventTypeValueListenable.value}. Participant type: ${participantTypeValueListenable.value}. Number of participants: ${_noOfParticipantsController.text}. Event description: ${_eventDescriptionGeminiPromptController.text}. Impact Analysis: ${_impactAnalysisController.text} Please give brief description of event report in long paragraph which has  1000 words as plain text.",
       images: [_eventPosterForGemini.first],
     ).then((value) {
       _eventDescriptionController.text =
