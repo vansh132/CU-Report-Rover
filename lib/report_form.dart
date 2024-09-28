@@ -308,15 +308,6 @@ class _ReportFormState extends State<ReportForm> {
     return widgets;
   }
 
-  // Future<Uint8List> _downloadImage(String url) async {
-  //   final response = await http.get(Uri.parse(url));
-  //   if (response.statusCode == 200) {
-  //     return response.bodyBytes;
-  //   } else {
-  //     throw Exception('Failed to load image');
-  //   }
-  // }
-
   void extractEventDetails(BuildContext context) async {
     // List of progress messages to show
     List<String> progressMessages = [
@@ -770,17 +761,6 @@ class _ReportFormState extends State<ReportForm> {
                 customeSpace(height: 8),
                 Row(
                   children: [
-                    // Expanded(
-                    //   child: buildDropdownButtonFormField(
-                    //     options: events,
-                    //     selectedValue: eventTypeValueListenable,
-                    //     hintText: "Select Event Type",
-                    //     validationMessage: "Please Select event type",
-                    //   ),
-                    // ),
-                    // const SizedBox(
-                    //   width: 24,
-                    // ),
                     Expanded(
                       child: buildDateFormField(context, 'Please select date'),
                     ),
@@ -905,61 +885,7 @@ class _ReportFormState extends State<ReportForm> {
                   true,
                   "Please add event report brief description",
                 ),
-                // delete below code
-                // Row(
-                //   children: [
-                //     Expanded(
-                //       child: _buildTextField(
-                //         _highlightsController,
-                //         'Event Highlights',
-                //         true,
-                //         "Please add event highlights",
-                //       ),
-                //     ),
-                //     const SizedBox(
-                //       width: 12,
-                //     ),
-                //     Expanded(
-                //       child: _buildTextField(
-                //         _keyTakeawaysController,
-                //         'Key Takeaways',
-                //         true,
-                //         "Please enter key takeaways",
-                //       ),
-                //     ),
-                //   ],
-                // ),
-                // customeSpace(height: 4),
-                // Row(
-                //   children: [
-                //     Expanded(
-                //       child: _buildTextField(
-                //         _summaryController,
-                //         'Event Summary',
-                //         true,
-                //         "Please enter event summary",
-                //       ),
-                //     ),
-                //     const SizedBox(
-                //       width: 12,
-                //     ),
-                //     Expanded(
-                //       child: _buildTextField(
-                //         _followUpController,
-                //         'Follow-Up',
-                //         true,
-                //         "Please enter follow-up",
-                //       ),
-                //     ),
-                //   ],
-                // ),
-                // customeSpace(height: 4),
-                // _buildTextField(
-                //   _eventDescriptionController,
-                //   'Event Report Brief Description',
-                //   true,
-                //   "Please add event report brief description",
-                // ),
+
                 customeSpace(height: 20),
                 const Divider(),
                 customeSpace(height: 12),
