@@ -1737,39 +1737,55 @@ class _ReportFormState extends State<ReportForm> {
                     'Rapporteur Email', _rapporteurEmailController.text),
               ],
             ),
-            pw.SizedBox(height: height * 0.02),
-            _buildTextBlock('Event Report', _eventDescriptionController.text),
-            _speakerNameControllers.isEmpty
-                ? pw.SizedBox()
-                : pw.Text('Speakers Profile',
-                    style: pw.TextStyle(
-                        fontSize: 14, fontWeight: pw.FontWeight.bold)),
-            pw.SizedBox(height: 8),
-            for (int i = 0; i < _speakerBioControllers.length; i++)
-              pw.Column(
-                crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
-                  pw.Container(
-                    width: double.infinity,
-                    child: pw.Row(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Image(pw.MemoryImage(_speakerImages[i]),
-                            height: 150, width: 150),
-                        pw.SizedBox(width: width * 0.05),
-                        pw.Expanded(
-                          child: pw.Text(_speakerBioControllers[i].text,
-                              textAlign: pw.TextAlign.justify),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
           ];
         },
       ),
     );
+
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          return pw.Padding(
+            padding: const pw.EdgeInsets.all(20),
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                _buildTextBlock(
+                    'Event Report', _eventDescriptionController.text),
+                _speakerNameControllers.isEmpty
+                    ? pw.SizedBox()
+                    : pw.Text('Speakers Profile',
+                        style: pw.TextStyle(
+                            fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                pw.SizedBox(height: 8),
+                for (int i = 0; i < _speakerBioControllers.length; i++)
+                  pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Container(
+                        width: double.infinity,
+                        child: pw.Row(
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          children: [
+                            pw.Image(pw.MemoryImage(_speakerImages[i]),
+                                height: 150, width: 150),
+                            pw.SizedBox(width: width * 0.05),
+                            pw.Expanded(
+                              child: pw.Text(_speakerBioControllers[i].text,
+                                  textAlign: pw.TextAlign.justify),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+
 // New page for Geo Tagged Image
     pdf.addPage(
       pw.Page(
