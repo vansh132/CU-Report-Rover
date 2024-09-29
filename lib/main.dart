@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:get/get.dart';
 import 'package:report/auto_report.dart';
+import 'package:report/devices.dart';
 import 'theme/app_theme.dart';
 
 void main() {
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: theme.light,
-      home: const AutoReport(),
+      home: const Devices(),
     );
   }
 }
