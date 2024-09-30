@@ -54,9 +54,9 @@ class _AutoReportState extends State<AutoReport> {
   final List<TextEditingController> _speakerOrganizationControllers = [];
   final List<TextEditingController> _speakerBioControllers = [];
 
-  bool _analysisCompleted = true;
-  bool _additionalInformation = true;
-  bool _isEventDetailsGenerated = true;
+  bool _analysisCompleted = false;
+  bool _additionalInformation = false;
+  bool _isEventDetailsGenerated = false;
 
   // geoaTagged image
   XFile geoTaggedImage = XFile("");
@@ -1858,6 +1858,10 @@ class _AutoReportState extends State<AutoReport> {
     final Uint8List activityImageBytes = await activityImage.readAsBytes();
     final pw.MemoryImage activityPdfImage = pw.MemoryImage(activityImageBytes);
 
+    final Uint8List attendenceImageBytes = await attendanceImage.readAsBytes();
+    final pw.MemoryImage attendancePdfImage =
+        pw.MemoryImage(attendenceImageBytes);
+
     final Uint8List posterImageBytes = await eventPosterImage.readAsBytes();
     final pw.MemoryImage posterPdfImage = pw.MemoryImage(posterImageBytes);
 
@@ -2044,32 +2048,6 @@ class _AutoReportState extends State<AutoReport> {
       ),
     );
 
-    // New page for Feedback Form Image
-    pdf.addPage(
-      pw.Page(
-        build: (pw.Context context) {
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Text('FeedBack Form Image',
-                  style: pw.TextStyle(
-                      fontSize: 14, fontWeight: pw.FontWeight.bold)),
-              pw.SizedBox(height: 12),
-              pw.Center(
-                  child: pw.SizedBox(
-                height: 350,
-                width: 500,
-                child: pw.Image(
-                  fit: pw.BoxFit.fill,
-                  feedbackPdfImage,
-                ),
-              )),
-            ],
-          );
-        },
-      ),
-    );
-
     // New page for Activity Image
     pdf.addPage(
       pw.Page(
@@ -2088,6 +2066,58 @@ class _AutoReportState extends State<AutoReport> {
                 child: pw.Image(
                   fit: pw.BoxFit.fill,
                   activityPdfImage,
+                ),
+              )),
+            ],
+          );
+        },
+      ),
+    );
+
+    // New page for Feedback Form Image
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text('Attendence Image',
+                  style: pw.TextStyle(
+                      fontSize: 14, fontWeight: pw.FontWeight.bold)),
+              pw.SizedBox(height: 12),
+              pw.Center(
+                  child: pw.SizedBox(
+                height: 350,
+                width: 500,
+                child: pw.Image(
+                  fit: pw.BoxFit.fill,
+                  attendancePdfImage,
+                ),
+              )),
+            ],
+          );
+        },
+      ),
+    );
+
+    // New page for Feedback Form Image
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text('FeedBack Form Image',
+                  style: pw.TextStyle(
+                      fontSize: 14, fontWeight: pw.FontWeight.bold)),
+              pw.SizedBox(height: 12),
+              pw.Center(
+                  child: pw.SizedBox(
+                height: 350,
+                width: 500,
+                child: pw.Image(
+                  fit: pw.BoxFit.fill,
+                  feedbackPdfImage,
                 ),
               )),
             ],
