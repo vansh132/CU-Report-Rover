@@ -54,16 +54,20 @@ class _AutoReportState extends State<AutoReport> {
   final List<TextEditingController> _speakerOrganizationControllers = [];
   final List<TextEditingController> _speakerBioControllers = [];
 
-  bool _analysisCompleted = false;
-  bool _additionalInformation = false;
-  bool _isEventDetailsGenerated = false;
+  bool _analysisCompleted = true;
+  bool _additionalInformation = true;
+  bool _isEventDetailsGenerated = true;
 
+  // geoaTagged image
   XFile geoTaggedImage = XFile("");
   Uint8List? geoTaggedImageUnit8;
-  XFile feedBackFormImage = XFile("");
-  Uint8List? feedBackFormImageUnit8;
+  // feedback Analysis image
+  XFile feedBackAnalysisImage = XFile("");
+  Uint8List? feedBackAnalysisImageUnit8;
   XFile activityImage = XFile("");
   Uint8List? activityImageUnit8;
+  XFile attendanceImage = XFile("");
+  Uint8List? attendanceImageUnit8;
   XFile eventPosterImage = XFile("");
   Uint8List? eventPosterImageUnit8;
   // speaker images
@@ -159,19 +163,53 @@ class _AutoReportState extends State<AutoReport> {
     var convertedImage = await res.readAsBytes();
 
     setState(() {
-      feedBackFormImage = res;
-      feedBackFormImageUnit8 = convertedImage;
+      feedBackAnalysisImage = res;
+      feedBackAnalysisImageUnit8 = convertedImage;
     });
   }
 
   void clearFeedbackFormImage() {
     setState(() {
-      feedBackFormImage = XFile("");
-      feedBackFormImageUnit8 = null;
+      feedBackAnalysisImage = XFile("");
+      feedBackAnalysisImageUnit8 = null;
     });
   }
 
   Future<XFile> pickFeebackFormImages() async {
+    XFile image = XFile("");
+    try {
+      var files = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        allowMultiple: false,
+      );
+
+      if (files != null && files.files.isNotEmpty) {
+        image = files.files[0].xFile;
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return image;
+  }
+
+  void selectAttendanceImage() async {
+    var res = await pickFeebackFormImages();
+    var convertedImage = await res.readAsBytes();
+
+    setState(() {
+      attendanceImage = res;
+      attendanceImageUnit8 = convertedImage;
+    });
+  }
+
+  void clearAttendanceImage() {
+    setState(() {
+      attendanceImage = XFile("");
+      attendanceImageUnit8 = null;
+    });
+  }
+
+  Future<XFile> pickAttendanceImages() async {
     XFile image = XFile("");
     try {
       var files = await FilePicker.platform.pickFiles(
@@ -224,6 +262,15 @@ class _AutoReportState extends State<AutoReport> {
 
   void selectPosterImage() async {
     var res = await eventPostersImage();
+    if (res.path.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Please select an image",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+      );
+      return;
+    }
     var convertedImage = await res.readAsBytes();
     _eventPosterForGemini.add(convertedImage);
     setState(() {
@@ -276,7 +323,6 @@ class _AutoReportState extends State<AutoReport> {
     } catch (e) {
       debugPrint(e.toString());
     }
-    print(image);
     return image;
   }
 
@@ -1195,7 +1241,7 @@ class _AutoReportState extends State<AutoReport> {
                                     Expanded(
                                       child: Column(
                                         children: [
-                                          feedBackFormImageUnit8 == null
+                                          feedBackAnalysisImageUnit8 == null
                                               ? GestureDetector(
                                                   onTap:
                                                       selectFeedbackFormImage,
@@ -1247,7 +1293,7 @@ class _AutoReportState extends State<AutoReport> {
                                                 )
                                               : Center(
                                                   child: Image.memory(
-                                                    feedBackFormImageUnit8!,
+                                                    feedBackAnalysisImageUnit8!,
                                                     height: 300,
                                                     width: 300,
                                                   ),
@@ -1350,6 +1396,90 @@ class _AutoReportState extends State<AutoReport> {
                                                 ),
                                                 icon: const Icon(
                                                     Icons.cancel_outlined),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 12,
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        children: [
+                                          attendanceImageUnit8 == null
+                                              ? GestureDetector(
+                                                  onTap: selectAttendanceImage,
+                                                  child: DottedBorder(
+                                                    radius:
+                                                        const Radius.circular(
+                                                      10,
+                                                    ),
+                                                    dashPattern: const [10, 4],
+                                                    borderType:
+                                                        BorderType.RRect,
+                                                    strokeCap: StrokeCap.round,
+                                                    child: Container(
+                                                      width: double.infinity,
+                                                      height: 150,
+                                                      decoration: BoxDecoration(
+                                                        // color: Colors.red,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                      ),
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          const Icon(
+                                                            Icons
+                                                                .folder_open_outlined,
+                                                            size: 40,
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 15,
+                                                          ),
+                                                          Text(
+                                                            "Upload Attendance Image",
+                                                            style: TextStyle(
+                                                              fontSize: 15,
+                                                              color: Colors.grey
+                                                                  .shade400,
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                              : Center(
+                                                  child: Image.memory(
+                                                    attendanceImageUnit8!,
+                                                    height: 300,
+                                                    width: 300,
+                                                  ),
+                                                ),
+                                          customeSpace(height: 12),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                            children: [
+                                              ElevatedButton.icon(
+                                                onPressed: submitted == true
+                                                    ? null
+                                                    : clearActivityImage,
+                                                label: const Text(
+                                                  "Clear",
+                                                ),
+                                                icon: const Icon(
+                                                  Icons.cancel_outlined,
+                                                ),
                                               ),
                                             ],
                                           ),
@@ -1721,7 +1851,8 @@ class _AutoReportState extends State<AutoReport> {
     final Uint8List geoImageBytes = await geoTaggedImage.readAsBytes();
     final pw.MemoryImage geoPdfImage = pw.MemoryImage(geoImageBytes);
 
-    final Uint8List feedbackImageBytes = await feedBackFormImage.readAsBytes();
+    final Uint8List feedbackImageBytes =
+        await feedBackAnalysisImage.readAsBytes();
     final pw.MemoryImage feedbackPdfImage = pw.MemoryImage(feedbackImageBytes);
 
     final Uint8List activityImageBytes = await activityImage.readAsBytes();
