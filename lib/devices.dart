@@ -10,6 +10,6 @@ class Devices extends StatelessWidget {
     final width = MediaQuery.of(context).size.width;
     // print(width);
 
-    return width > 480 ? const AutoReport() : const MobileAutoReport();
+    return width >= 750 ? const AutoReport() : const MobileAutoReport();
   }
 }

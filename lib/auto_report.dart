@@ -1402,7 +1402,7 @@ class _AutoReportState extends State<AutoReport> {
                                         ],
                                       ),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 12,
                                     ),
                                     Expanded(
@@ -1473,7 +1473,7 @@ class _AutoReportState extends State<AutoReport> {
                                               ElevatedButton.icon(
                                                 onPressed: submitted == true
                                                     ? null
-                                                    : clearActivityImage,
+                                                    : clearAttendanceImage,
                                                 label: const Text(
                                                   "Clear",
                                                 ),
@@ -2132,9 +2132,9 @@ class _AutoReportState extends State<AutoReport> {
               borderRadius:
                   BorderRadius.circular(12.0), // Rounded corners (optional)
             ),
-            child: Column(
+            child: const Column(
               mainAxisSize: MainAxisSize.min,
-              children: const [
+              children: [
                 CircularProgressIndicator(), // Loading indicator
                 SizedBox(height: 16), // Space between indicator and text
                 Text(

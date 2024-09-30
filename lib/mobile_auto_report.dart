@@ -54,14 +54,16 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
   final List<TextEditingController> _speakerOrganizationControllers = [];
   final List<TextEditingController> _speakerBioControllers = [];
 
-  bool _analysisCompleted = false;
-  bool _additionalInformation = false;
-  bool _isEventDetailsGenerated = false;
+  bool _analysisCompleted = true;
+  bool _additionalInformation = true;
+  bool _isEventDetailsGenerated = true;
 
   XFile geoTaggedImage = XFile("");
   Uint8List? geoTaggedImageUnit8;
   XFile feedBackFormImage = XFile("");
   Uint8List? feedBackFormImageUnit8;
+  XFile attendanceImage = XFile("");
+  Uint8List? attendanceImageUnit8;
   XFile activityImage = XFile("");
   Uint8List? activityImageUnit8;
   XFile eventPosterImage = XFile("");
@@ -172,6 +174,40 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
   }
 
   Future<XFile> pickFeebackFormImages() async {
+    XFile image = XFile("");
+    try {
+      var files = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        allowMultiple: false,
+      );
+
+      if (files != null && files.files.isNotEmpty) {
+        image = files.files[0].xFile;
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return image;
+  }
+
+  void selectAttendanceImage() async {
+    var res = await pickAttendanceImages();
+    var convertedImage = await res.readAsBytes();
+
+    setState(() {
+      attendanceImage = res;
+      attendanceImageUnit8 = convertedImage;
+    });
+  }
+
+  void clearAttendanceImage() {
+    setState(() {
+      attendanceImage = XFile("");
+      attendanceImageUnit8 = null;
+    });
+  }
+
+  Future<XFile> pickAttendanceImages() async {
     XFile image = XFile("");
     try {
       var files = await FilePicker.platform.pickFiles(
@@ -1317,6 +1353,90 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
                                                 onPressed: submitted == true
                                                     ? null
                                                     : clearActivityImage,
+                                                label: const Text(
+                                                  "Clear",
+                                                ),
+                                                icon: const Icon(
+                                                    Icons.cancel_outlined),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                customeSpace(height: 32),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        children: [
+                                          attendanceImageUnit8 == null
+                                              ? GestureDetector(
+                                                  onTap: selectAttendanceImage,
+                                                  child: DottedBorder(
+                                                    radius:
+                                                        const Radius.circular(
+                                                            10),
+                                                    dashPattern: const [10, 4],
+                                                    borderType:
+                                                        BorderType.RRect,
+                                                    strokeCap: StrokeCap.round,
+                                                    child: Container(
+                                                      width: double.infinity,
+                                                      height: 150,
+                                                      decoration: BoxDecoration(
+                                                        // color: Colors.red,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                      ),
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          const Icon(
+                                                            Icons
+                                                                .folder_open_outlined,
+                                                            size: 40,
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 15,
+                                                          ),
+                                                          Text(
+                                                            "Upload Attendance Image",
+                                                            style: TextStyle(
+                                                              fontSize: 15,
+                                                              color: Colors.grey
+                                                                  .shade400,
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                              : Center(
+                                                  child: Image.memory(
+                                                    attendanceImageUnit8!,
+                                                    height: 300,
+                                                    width: 300,
+                                                  ),
+                                                ),
+                                          customeSpace(height: 12),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                            children: [
+                                              ElevatedButton.icon(
+                                                onPressed: submitted == true
+                                                    ? null
+                                                    : clearAttendanceImage,
                                                 label: const Text(
                                                   "Clear",
                                                 ),
