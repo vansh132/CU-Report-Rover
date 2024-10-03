@@ -28,6 +28,7 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
   final TextEditingController _impactAnalysisController =
       TextEditingController();
   final TextEditingController _departmentController = TextEditingController();
+  final TextEditingController _schoolController = TextEditingController();
   final TextEditingController _typeController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
@@ -58,14 +59,16 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
   bool _additionalInformation = false;
   bool _isEventDetailsGenerated = false;
 
+  // geoaTagged image
   XFile geoTaggedImage = XFile("");
   Uint8List? geoTaggedImageUnit8;
-  XFile feedBackFormImage = XFile("");
-  Uint8List? feedBackFormImageUnit8;
-  XFile attendanceImage = XFile("");
-  Uint8List? attendanceImageUnit8;
+  // feedback Analysis image
+  XFile feedBackAnalysisImage = XFile("");
+  Uint8List? feedBackAnalysisImageUnit8;
   XFile activityImage = XFile("");
   Uint8List? activityImageUnit8;
+  XFile attendanceImage = XFile("");
+  Uint8List? attendanceImageUnit8;
   XFile eventPosterImage = XFile("");
   Uint8List? eventPosterImageUnit8;
   // speaker images
@@ -76,7 +79,8 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
 
   bool submitted = false;
 
-  final departmentValueListenable = ValueNotifier<String?>(null);
+  String selectedDepartment = 'Select Department';
+  String selectedSchool = 'Select School';
   List<String> departments = [
     'Department of Computer Science',
     'Department of Mathematics',
@@ -86,22 +90,45 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
     'Department of Life Science',
   ];
 
-  final schoolValueListenable = ValueNotifier<String?>(null);
   List<String> schools = [
-    'School of Science',
-    'School of Commerce',
-    'School of Social Science',
-    "School of Architecture",
-    "School of Arts and Humanities",
+    "Select School",
     "School of Business and Management",
     "School of Commerce, Finance and Accountancy",
-    "School of Education",
-    "School of Engineering and Technology",
-    "School of Law",
-    "School of Psychological Sciences",
     "School of Sciences",
     "School of Social Sciences",
   ];
+
+  // Define the map of schools to their respective departments
+  Map<String, List<String>> schoolDepartments = {
+    'School of Sciences': [
+      'Department of Computer Science',
+      'Department of Mathematics',
+      'Department of Physics',
+      'Department of Chemistry',
+      'Department of Life Science',
+    ],
+    'School of Commerce, Finance and Accountancy': [
+      'Department of Commerce',
+      'Department of Professional Studies',
+    ],
+    'Select School': [
+      'Select Department',
+    ],
+    'School of Business and Management': [
+      'Department of Business and Management',
+      'Department of Hotel Management',
+      'Department of Tourism Management',
+    ],
+    'School of Social Sciences': [
+      'Department of Social Science',
+    ],
+  };
+
+  // Function to get departments based on the selected school
+  List<String> getDepartments(String selectedSchool) {
+    // Return the list of departments if the school exists in the map
+    return schoolDepartments[selectedSchool] ?? [];
+  }
 
   // Workshop/Seminar/Conference/Training/Events
   final eventTypeValueListenable = ValueNotifier<String?>(null);
@@ -111,6 +138,7 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
     "Conference",
     "Training",
     "Events",
+    "Outreach Programs",
   ];
 
   //Student/Faculty/Research Scholar
@@ -121,8 +149,25 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
     "Research Scholar",
   ];
 
+  //Event modes - Online/Offline/Hybrid
+  final eventModeValueListenable = ValueNotifier<String?>(null);
+  List<String> eventModes = [
+    "Online",
+    "Offline",
+    "Hybrid",
+  ];
+
   void selectGeoTaggedImage() async {
     var res = await pickGeoTaggedImages();
+    if (res.path.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Please upload an Geotag image",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+      );
+      return;
+    }
     var convertedImage = await res.readAsBytes();
     setState(() {
       geoTaggedImage = res;
@@ -158,18 +203,27 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
 
   void selectFeedbackFormImage() async {
     var res = await pickFeebackFormImages();
+    if (res.path.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Please upload an Feedback image",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+      );
+      return;
+    }
     var convertedImage = await res.readAsBytes();
 
     setState(() {
-      feedBackFormImage = res;
-      feedBackFormImageUnit8 = convertedImage;
+      feedBackAnalysisImage = res;
+      feedBackAnalysisImageUnit8 = convertedImage;
     });
   }
 
   void clearFeedbackFormImage() {
     setState(() {
-      feedBackFormImage = XFile("");
-      feedBackFormImageUnit8 = null;
+      feedBackAnalysisImage = XFile("");
+      feedBackAnalysisImageUnit8 = null;
     });
   }
 
@@ -191,7 +245,16 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
   }
 
   void selectAttendanceImage() async {
-    var res = await pickAttendanceImages();
+    var res = await pickFeebackFormImages();
+    if (res.path.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Please upload an Attendance image",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+      );
+      return;
+    }
     var convertedImage = await res.readAsBytes();
 
     setState(() {
@@ -226,6 +289,15 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
 
   void selectActivityImage() async {
     var res = await pickActivityImages();
+    if (res.path.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Please upload an Activity image",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+      );
+      return;
+    }
     var convertedImage = await res.readAsBytes();
 
     setState(() {
@@ -260,6 +332,15 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
 
   void selectPosterImage() async {
     var res = await eventPostersImage();
+    if (res.path.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Please Upload Event poster",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+      );
+      return;
+    }
     var convertedImage = await res.readAsBytes();
     _eventPosterForGemini.add(convertedImage);
     setState(() {
@@ -312,7 +393,6 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
     } catch (e) {
       debugPrint(e.toString());
     }
-    print(image);
     return image;
   }
 
@@ -543,9 +623,33 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
     );
 
     try {
-      // Retrieve title from image
       currentMessage.value = progressMessages[0];
 
+      // Retrieve title from image
+      await gemini.textAndImage(
+        text:
+            "Which school is assosiated with this event? School of Sciences? School of Social Sciences? give answer as plain text",
+        images: [_eventPosterForGemini.first],
+      ).then((value) {
+        _schoolController.text = value?.content?.parts?.first.text ?? '';
+        log(value?.content?.parts?.last.text ?? '');
+      }).catchError((e) {
+        log('textAndImageInput', error: e);
+      });
+
+      // Retrieve department from image
+      await gemini.textAndImage(
+        text:
+            "Which department is assosiated with this event? Department of Computer Sciences? Department of Mathematics? if not mention, response as 'N/A' give answer as plain text",
+        images: [_eventPosterForGemini.first],
+      ).then((value) {
+        _departmentController.text = value?.content?.parts?.first.text ?? '';
+        log(value?.content?.parts?.last.text ?? '');
+      }).catchError((e) {
+        log('textAndImageInput', error: e);
+      });
+
+      // Retrieve title from image
       await gemini.textAndImage(
         text: "What is the title of event in image? give answer as plain text",
         images: [_eventPosterForGemini.first],
@@ -585,7 +689,7 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
 
       await gemini.textAndImage(
         text:
-            "What is the only time of event and don't give date of event in image? give answer as plain text",
+            "What is the only time of event and don't give date of event in image? if time is not mention, give response only as 'N/A'. give answer as plain text",
         images: [_eventPosterForGemini.first],
       ).then((value) {
         _timeController.text = value?.content?.parts?.first.text ?? '';
@@ -608,6 +712,7 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
 
   @override
   void dispose() {
+    _schoolController.dispose();
     _departmentController.dispose();
     _typeController.dispose();
     _titleController.dispose();
@@ -1207,7 +1312,7 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
                                     ),
                                     Column(
                                       children: [
-                                        feedBackFormImageUnit8 == null
+                                        feedBackAnalysisImageUnit8 == null
                                             ? GestureDetector(
                                                 onTap: selectFeedbackFormImage,
                                                 child: DottedBorder(
@@ -1256,7 +1361,7 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
                                               )
                                             : Center(
                                                 child: Image.memory(
-                                                  feedBackFormImageUnit8!,
+                                                  feedBackAnalysisImageUnit8!,
                                                   height: 300,
                                                   width: 300,
                                                 ),
@@ -1813,7 +1918,8 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
     final Uint8List geoImageBytes = await geoTaggedImage.readAsBytes();
     final pw.MemoryImage geoPdfImage = pw.MemoryImage(geoImageBytes);
 
-    final Uint8List feedbackImageBytes = await feedBackFormImage.readAsBytes();
+    final Uint8List feedbackImageBytes =
+        await feedBackAnalysisImage.readAsBytes();
     final pw.MemoryImage feedbackPdfImage = pw.MemoryImage(feedbackImageBytes);
 
     final Uint8List activityImageBytes = await activityImage.readAsBytes();
