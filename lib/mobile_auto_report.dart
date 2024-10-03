@@ -55,9 +55,9 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
   final List<TextEditingController> _speakerOrganizationControllers = [];
   final List<TextEditingController> _speakerBioControllers = [];
 
-  bool _analysisCompleted = false;
-  bool _additionalInformation = false;
-  bool _isEventDetailsGenerated = false;
+  bool _analysisCompleted = true;
+  bool _additionalInformation = true;
+  bool _isEventDetailsGenerated = true;
 
   // geoaTagged image
   XFile geoTaggedImage = XFile("");
@@ -396,33 +396,36 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
     return image;
   }
 
-  List<pw.Widget> _buildSpeakerDetailsPdf() {
+  List<pw.Widget> _buildSpeakerDetailsPdf(pw.Font ttf, pw.Font boldTtf) {
     List<pw.Widget> widgets = [];
 
     for (int i = 0; i < _speakerNameControllers.length; i++) {
-      widgets.add(pw.Column(
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: [
-          pw.Text('Speaker ${i + 1} Details',
-              style:
-                  pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold)),
-          pw.Table(
-            border: pw.TableBorder.all(),
-            children: [
-              _buildTableRow('Name', _speakerNameControllers[i].text),
-              _buildTableRow(
-                  'Title/Position', _speakerPositionControllers[i].text),
-              _buildTableRow(
-                  'Organization', _speakerOrganizationControllers[i].text),
-              _buildTableRow(
-                  'Title of Presentation', _speakerTitleControllers[i].text),
-            ],
-          ),
-          pw.SizedBox(
-            height: 12,
-          ),
-        ],
-      ));
+      widgets.add(
+        pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Text(
+              'Speaker ${i + 1} Details',
+              style: pw.TextStyle(
+                  fontSize: 12, fontWeight: pw.FontWeight.bold, font: boldTtf),
+            ),
+            pw.Table(
+              border: pw.TableBorder.all(),
+              children: [
+                _buildTableRow(
+                    'Name', _speakerNameControllers[i].text, ttf, boldTtf),
+                _buildTableRow('Title/Position',
+                    _speakerPositionControllers[i].text, ttf, boldTtf),
+                _buildTableRow('Organization',
+                    _speakerOrganizationControllers[i].text, ttf, boldTtf),
+                _buildTableRow('Title of Presentation',
+                    _speakerTitleControllers[i].text, ttf, boldTtf),
+              ],
+            ),
+            pw.SizedBox(height: 12),
+          ],
+        ),
+      );
     }
     return widgets;
   }
@@ -777,823 +780,934 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
-        body: Container(
-      width: width,
-      height: height,
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-          colors: [
-            Color(0xffFFFFFF),
-            Color(0xffF5F5DC),
-          ],
+        bottomNavigationBar: Container(
+          padding: const EdgeInsets.all(12),
+          height: 100.0,
+          decoration: BoxDecoration(
+            color: Colors.white, // Background color of the container
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey
+                    .withOpacity(0.5), // Shadow color with some transparency
+                spreadRadius: 2, // How much the shadow spreads
+                blurRadius: 5, // How soft or sharp the shadow is
+                offset: const Offset(
+                    0, 3), // Position of the shadow (horizontal, vertical)
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  "Concept & Design by: Dr. Ashok Immanual V",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.roboto(
+                    // fontSize: 36,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xff0b3f63),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  "Mentored by: Dr. Helen K. Joy",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.roboto(
+                    // fontSize: 36,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xff0b3f63),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  "Developed by: Riya Shah (2347151) & Vansh Shah (2347152) ",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.roboto(
+                    // fontSize: 36,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xff0b3f63),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      child: SafeArea(
-        child: Form(
-          key: formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Image.asset(
-                  "assets/images/logo.png",
-                  width: 280,
-                  height: 100,
-                ),
-                Container(
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
-                  decoration: BoxDecoration(
-                    // color: Colors.white, // Background color
-                    color: const Color(0xffF5F5F5), // Background color
-                    borderRadius: BorderRadius.circular(
-                        12.0), // Rounded corners (optional)
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey
-                            .withOpacity(0.5), // Shadow color with transparency
-                        spreadRadius: 5, // How wide the shadow is spread
-                        blurRadius: 7, // How soft the shadow is
-                        offset: const Offset(
-                            0, 3), // Changes position of the shadow (x, y)
-                      ),
-                    ],
-                  ),
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Column(
-                        children: [
-                          Text(
-                            "CU Report Rover",
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.roboto(
-                              fontSize: 36,
-                              fontWeight: FontWeight.bold,
-                              color: const Color(0xff0b3f63),
-                            ),
-                          ),
-                          Text(
-                            "where events end, effortless reports begin",
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.poppins(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                              color: const Color(0xff0b3f63),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: height * 0.05),
-                // section 2 - Upload poster
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    eventPosterImageUnit8 == null
-                        ? ElevatedButton(
-                            onPressed: selectPosterImage,
-                            style: OutlinedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    12.0), // Adjust the radius as needed
-                              ),
-                            ),
-                            child: const Text("Upload Poster"),
-                          )
-                        : Center(
-                            child: Image.memory(
-                              eventPosterImageUnit8!,
-                              height: height * 0.5,
-                              width: 300,
-                            ),
-                          ),
-                    if (eventPosterImageUnit8 != null) customeSpace(height: 20),
-                    if (eventPosterImageUnit8 != null)
-                      Center(
-                        child: ElevatedButton(
-                          // onPressed: extractBasicInformation,
-                          onPressed: () {
-                            //comment
-                            // setState(() {
-                            //   _analysisCompleted = true;
-                            //   _additionalInformation = true;
-                            // });
-
-                            extractBasicInformation();
-                          },
-                          child: const Text(
-                            "Analyze Event Poster",
-                          ),
-                        ),
-                      ),
-                    if (eventPosterImageUnit8 != null) customeSpace(height: 20),
-                    // section 3 - Basic Information
-                    _analysisCompleted
-                        ? Container(
-                            width: width * 0.9,
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: const Color(0xffF7F7F7),
-                              borderRadius: BorderRadius.circular(12.0),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.2),
-                                  spreadRadius: 5,
-                                  blurRadius: 7,
-                                  offset: const Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              children: [
-                                Center(
-                                  child: Text(
-                                    "General Details",
-                                    style: GoogleFonts.ptSans(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.w700,
-                                      color: const Color(0xff0b3f63),
-                                    ),
-                                  ),
-                                ),
-                                customeSpace(height: 12),
-                                Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Text(
-                                      "School of Sciences",
-                                      style: GoogleFonts.roboto(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.black,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    const SizedBox(
-                                      height: 12,
-                                    ),
-                                    Text(
-                                      "Department of Computer Science",
-                                      style: GoogleFonts.roboto(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.black,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
-                                ),
-                                customeSpace(height: 12),
-                                Column(
-                                  children: [
-                                    _buildTextField(
-                                        _titleController,
-                                        'Event Title',
-                                        false,
-                                        "Please enter event title"),
-                                    const SizedBox(
-                                      height: 12,
-                                    ),
-                                    _buildTextField(
-                                        _venueController,
-                                        'Event Venue',
-                                        false,
-                                        "Please enter event venue"),
-                                  ],
-                                ),
-                                customeSpace(height: 8),
-                                Column(
-                                  children: [
-                                    buildDateFormField(
-                                        context, 'Please select date'),
-                                    const SizedBox(
-                                      height: 12,
-                                    ),
-                                    buildTimeFormField(
-                                        context, 'Please select time'),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          )
-                        : const SizedBox.shrink(),
-                    // section 3.1 - Additional Information of Event as input
-                    _additionalInformation
-                        ? Container(
-                            width: width * 0.9,
-                            padding: const EdgeInsets.all(12),
-                            margin: EdgeInsets.only(top: height * 0.05),
-                            decoration: BoxDecoration(
-                              color: const Color(0xffF7F7F7),
-                              borderRadius: BorderRadius.circular(12.0),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.2),
-                                  spreadRadius: 5,
-                                  blurRadius: 7,
-                                  offset: const Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              children: [
-                                Center(
-                                  child: Text(
-                                    "Please provide additional information",
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.ptSans(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.w700,
-                                      color: const Color(0xff0b3f63),
-                                    ),
-                                  ),
-                                ),
-                                customeSpace(height: 12),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: buildDropdownButtonFormField(
-                                        options: events,
-                                        selectedValue: eventTypeValueListenable,
-                                        hintText: "Select Event Type",
-                                        validationMessage:
-                                            "Please Select event type",
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                customeSpace(height: 12),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: buildDropdownButtonFormField(
-                                          options: participants,
-                                          selectedValue:
-                                              participantTypeValueListenable,
-                                          hintText: "Select participant type",
-                                          validationMessage:
-                                              "please select participant type"),
-                                    ),
-                                    const SizedBox(
-                                      width: 24,
-                                    ),
-                                    Expanded(
-                                      child: _buildTextField(
-                                          _noOfParticipantsController,
-                                          'Number of Participants',
-                                          false,
-                                          "Please enter number of participants"),
-                                    ),
-                                  ],
-                                ),
-                                customeSpace(height: 12),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: _buildTextField(
-                                          _eventDescriptionGeminiPromptController,
-                                          'Event Description',
-                                          true,
-                                          "Please enter Event Description"),
-                                    ),
-                                  ],
-                                ),
-                                customeSpace(
-                                  height: 20,
-                                ),
-                                Center(
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      extractEventDetails(context);
-                                    },
-                                    child: const Text(
-                                      "Generate Synopsis Information",
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        : const SizedBox.shrink(),
-                    // section 3.2 - Generated Information
-                    _isEventDetailsGenerated
-                        ? Container(
-                            width: width * 0.9,
-                            padding: const EdgeInsets.all(12),
-                            margin: EdgeInsets.only(top: height * 0.05),
-                            decoration: BoxDecoration(
-                              color: const Color(0xffF7F7F7),
-                              borderRadius: BorderRadius.circular(12.0),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.2),
-                                  spreadRadius: 5,
-                                  blurRadius: 7,
-                                  offset: const Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              children: [
-                                Center(
-                                  child: Text(
-                                    "Synopsis Details",
-                                    style: GoogleFonts.ptSans(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.w700,
-                                      color: const Color(0xff0b3f63),
-                                    ),
-                                  ),
-                                ),
-                                customeSpace(height: 12),
-                                _buildTextField(
-                                  _highlightsController,
-                                  'Highlights',
-                                  true,
-                                  "Please add event highlights",
-                                ),
-                                customeSpace(height: 8),
-                                _buildTextField(
-                                  _keyTakeawaysController,
-                                  'Key Takeaways',
-                                  true,
-                                  "Please enter key takeaways",
-                                ),
-                                customeSpace(height: 8),
-                                _buildTextField(
-                                  _summaryController,
-                                  'Summary',
-                                  true,
-                                  "Please enter event summary",
-                                ),
-                                customeSpace(height: 8),
-                                _buildTextField(
-                                  _followUpController,
-                                  'Follow-Up',
-                                  true,
-                                  "Please enter follow-up",
-                                ),
-                                customeSpace(height: 8),
-                                _buildTextField(
-                                  _impactAnalysisController,
-                                  'Impact Analysis',
-                                  true,
-                                  "Please add event report brief description",
-                                ),
-                                customeSpace(height: 20),
-                              ],
-                            ),
-                          )
-                        : const SizedBox.shrink(),
-                    // section 4 - Speaker Details and Photos
-                    _isEventDetailsGenerated
-                        ? Container(
-                            width: width * 0.9,
-                            padding: const EdgeInsets.all(12),
-                            margin: EdgeInsets.only(top: height * 0.05),
-                            decoration: BoxDecoration(
-                              color: const Color(0xffF7F7F7),
-                              borderRadius: BorderRadius.circular(12.0),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.2),
-                                  spreadRadius: 5,
-                                  blurRadius: 7,
-                                  offset: const Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              children: [
-                                Center(
-                                  child: Text(
-                                    "Repporteur Details",
-                                    style: GoogleFonts.ptSans(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.w700,
-                                      color: const Color(0xff0b3f63),
-                                    ),
-                                  ),
-                                ),
-                                customeSpace(height: 12),
-                                Column(
-                                  children: [
-                                    _buildTextField(
-                                        _rapporteurNameController,
-                                        'Rapporteur Name',
-                                        false,
-                                        "Please add rapporteur name"),
-                                    const SizedBox(
-                                      height: 12,
-                                    ),
-                                    _buildTextField(
-                                        _rapporteurEmailController,
-                                        'Rapporteur Email',
-                                        false,
-                                        "Please add rapporteur email"),
-                                  ],
-                                ),
-                                customeSpace(height: 8),
-                                customeSpace(height: 20),
-                                const Divider(),
-                                customeSpace(height: 12),
-                                Center(
-                                  child: Text(
-                                    "Speaker Details",
-                                    style:
-                                        Theme.of(context).textTheme.titleLarge,
-                                  ),
-                                ),
-                                customeSpace(height: 24),
-                                Row(
-                                  children: [
-                                    ..._buildSpeakerDetails(),
-                                    const SizedBox(
-                                      width: 12,
-                                    ),
-                                  ],
-                                ),
-                                customeSpace(height: 16),
-                                Center(
-                                  child: ElevatedButton(
-                                    onPressed: _addSpeaker,
-                                    child: const Text('Add Speaker'),
-                                  ),
-                                ),
-                                customeSpace(height: 20),
-                                const Divider(),
-                                customeSpace(height: 12),
-                                // all images
-                                Column(
-                                  children: [
-                                    Column(
-                                      children: [
-                                        geoTaggedImageUnit8 == null
-                                            ? GestureDetector(
-                                                onTap: selectGeoTaggedImage,
-                                                child: DottedBorder(
-                                                  radius:
-                                                      const Radius.circular(10),
-                                                  dashPattern: const [10, 4],
-                                                  borderType: BorderType.RRect,
-                                                  strokeCap: StrokeCap.round,
-                                                  child: Container(
-                                                    width: double.infinity,
-                                                    height: 150,
-                                                    decoration: BoxDecoration(
-                                                      // color: Colors.red,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                    ),
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        const Icon(
-                                                          Icons
-                                                              .folder_open_outlined,
-                                                          size: 40,
-                                                        ),
-                                                        const SizedBox(
-                                                          height: 15,
-                                                        ),
-                                                        Text(
-                                                          "Upload GeoTag Image",
-                                                          style: TextStyle(
-                                                            fontSize: 15,
-                                                            color: Colors
-                                                                .grey.shade400,
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                            : Center(
-                                                child: Image.memory(
-                                                  geoTaggedImageUnit8!,
-                                                  height: 300,
-                                                  width: 300,
-                                                ),
-                                              ),
-                                        customeSpace(height: 12),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                          children: [
-                                            ElevatedButton.icon(
-                                              onPressed: submitted == true
-                                                  ? null
-                                                  : clearGeoTaggedImage,
-                                              label: const Text(
-                                                "Clear",
-                                              ),
-                                              icon: const Icon(
-                                                  Icons.cancel_outlined),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 12,
-                                    ),
-                                    Column(
-                                      children: [
-                                        feedBackAnalysisImageUnit8 == null
-                                            ? GestureDetector(
-                                                onTap: selectFeedbackFormImage,
-                                                child: DottedBorder(
-                                                  radius:
-                                                      const Radius.circular(10),
-                                                  dashPattern: const [10, 4],
-                                                  borderType: BorderType.RRect,
-                                                  strokeCap: StrokeCap.round,
-                                                  child: Container(
-                                                    width: double.infinity,
-                                                    height: 150,
-                                                    decoration: BoxDecoration(
-                                                      // color: Colors.red,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                    ),
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        const Icon(
-                                                          Icons
-                                                              .folder_open_outlined,
-                                                          size: 40,
-                                                        ),
-                                                        const SizedBox(
-                                                          height: 15,
-                                                        ),
-                                                        Text(
-                                                          "Upload Feedback Image",
-                                                          style: TextStyle(
-                                                            fontSize: 15,
-                                                            color: Colors
-                                                                .grey.shade400,
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                            : Center(
-                                                child: Image.memory(
-                                                  feedBackAnalysisImageUnit8!,
-                                                  height: 300,
-                                                  width: 300,
-                                                ),
-                                              ),
-                                        customeSpace(height: 12),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                          children: [
-                                            ElevatedButton.icon(
-                                              onPressed: submitted == true
-                                                  ? null
-                                                  : clearFeedbackFormImage,
-                                              label: const Text(
-                                                "Clear",
-                                              ),
-                                              icon: const Icon(
-                                                  Icons.cancel_outlined),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                customeSpace(height: 32),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        children: [
-                                          activityImageUnit8 == null
-                                              ? GestureDetector(
-                                                  onTap: selectActivityImage,
-                                                  child: DottedBorder(
-                                                    radius:
-                                                        const Radius.circular(
-                                                            10),
-                                                    dashPattern: const [10, 4],
-                                                    borderType:
-                                                        BorderType.RRect,
-                                                    strokeCap: StrokeCap.round,
-                                                    child: Container(
-                                                      width: double.infinity,
-                                                      height: 150,
-                                                      decoration: BoxDecoration(
-                                                        // color: Colors.red,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10),
-                                                      ),
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          const Icon(
-                                                            Icons
-                                                                .folder_open_outlined,
-                                                            size: 40,
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 15,
-                                                          ),
-                                                          Text(
-                                                            "Upload Activity Image",
-                                                            style: TextStyle(
-                                                              fontSize: 15,
-                                                              color: Colors.grey
-                                                                  .shade400,
-                                                            ),
-                                                          )
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                )
-                                              : Center(
-                                                  child: Image.memory(
-                                                    activityImageUnit8!,
-                                                    height: 300,
-                                                    width: 300,
-                                                  ),
-                                                ),
-                                          customeSpace(height: 12),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceAround,
-                                            children: [
-                                              ElevatedButton.icon(
-                                                onPressed: submitted == true
-                                                    ? null
-                                                    : clearActivityImage,
-                                                label: const Text(
-                                                  "Clear",
-                                                ),
-                                                icon: const Icon(
-                                                    Icons.cancel_outlined),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                customeSpace(height: 32),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        children: [
-                                          attendanceImageUnit8 == null
-                                              ? GestureDetector(
-                                                  onTap: selectAttendanceImage,
-                                                  child: DottedBorder(
-                                                    radius:
-                                                        const Radius.circular(
-                                                            10),
-                                                    dashPattern: const [10, 4],
-                                                    borderType:
-                                                        BorderType.RRect,
-                                                    strokeCap: StrokeCap.round,
-                                                    child: Container(
-                                                      width: double.infinity,
-                                                      height: 150,
-                                                      decoration: BoxDecoration(
-                                                        // color: Colors.red,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10),
-                                                      ),
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          const Icon(
-                                                            Icons
-                                                                .folder_open_outlined,
-                                                            size: 40,
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 15,
-                                                          ),
-                                                          Text(
-                                                            "Upload Attendance Image",
-                                                            style: TextStyle(
-                                                              fontSize: 15,
-                                                              color: Colors.grey
-                                                                  .shade400,
-                                                            ),
-                                                          )
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                )
-                                              : Center(
-                                                  child: Image.memory(
-                                                    attendanceImageUnit8!,
-                                                    height: 300,
-                                                    width: 300,
-                                                  ),
-                                                ),
-                                          customeSpace(height: 12),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceAround,
-                                            children: [
-                                              ElevatedButton.icon(
-                                                onPressed: submitted == true
-                                                    ? null
-                                                    : clearAttendanceImage,
-                                                label: const Text(
-                                                  "Clear",
-                                                ),
-                                                icon: const Icon(
-                                                    Icons.cancel_outlined),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          )
-                        : const SizedBox.shrink(),
-                    customeSpace(height: height * 0.05),
-                    _isEventDetailsGenerated
-                        ? Container(
-                            padding: const EdgeInsets.symmetric(vertical: 24),
-                            width: width * 0.8,
-                            child: ElevatedButton(
-                              style: ButtonStyle(
-                                padding: WidgetStateProperty.all(
-                                  const EdgeInsets.symmetric(
-                                    horizontal: 24,
-                                    vertical: 16,
-                                  ),
-                                ),
-                              ),
-                              onPressed: () {
-                                if (formKey.currentState!.validate()) {
-                                  _generatePdf(context);
-                                } else {
-                                  Get.snackbar(
-                                      "Error", "Please Enter all the details");
-                                }
-                                // _generatePdf(context);
-                              },
-                              child: const Text('Generate PDF'),
-                            ),
-                          )
-                        : const SizedBox.shrink(),
-                  ],
-                ),
+        body: Container(
+          width: width,
+          height: height,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+              colors: [
+                Color(0xffFFFFFF),
+                Color(0xffF5F5DC),
               ],
             ),
           ),
-        ),
-      ),
-    ));
+          child: SafeArea(
+            child: Form(
+              key: formKey,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Image.asset(
+                      "assets/images/logo.png",
+                      width: 280,
+                      height: 100,
+                    ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 20, horizontal: 24),
+                      decoration: BoxDecoration(
+                        // color: Colors.white, // Background color
+                        color: const Color(0xffF5F5F5), // Background color
+                        borderRadius: BorderRadius.circular(
+                            12.0), // Rounded corners (optional)
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(
+                                0.5), // Shadow color with transparency
+                            spreadRadius: 5, // How wide the shadow is spread
+                            blurRadius: 7, // How soft the shadow is
+                            offset: const Offset(
+                                0, 3), // Changes position of the shadow (x, y)
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Column(
+                            children: [
+                              Text(
+                                "CU Report Rover",
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.roboto(
+                                  fontSize: 36,
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xff0b3f63),
+                                ),
+                              ),
+                              Text(
+                                "where events end, effortless reports begin",
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400,
+                                  color: const Color(0xff0b3f63),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: height * 0.05),
+                    // section 2 - Upload poster
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        eventPosterImageUnit8 == null
+                            ? ElevatedButton(
+                                onPressed: selectPosterImage,
+                                style: OutlinedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        12.0), // Adjust the radius as needed
+                                  ),
+                                ),
+                                child: const Text("Upload Poster"),
+                              )
+                            : Center(
+                                child: Image.memory(
+                                  eventPosterImageUnit8!,
+                                  height: height * 0.5,
+                                  width: 300,
+                                ),
+                              ),
+                        if (eventPosterImageUnit8 != null)
+                          customeSpace(height: 20),
+                        if (eventPosterImageUnit8 != null)
+                          Center(
+                            child: ElevatedButton(
+                              // onPressed: extractBasicInformation,
+                              onPressed: () {
+                                //comment
+                                // setState(() {
+                                //   _analysisCompleted = true;
+                                //   _additionalInformation = true;
+                                // });
+
+                                extractBasicInformation();
+                              },
+                              child: const Text(
+                                "Analyze Event Poster",
+                              ),
+                            ),
+                          ),
+                        if (eventPosterImageUnit8 != null)
+                          customeSpace(height: 20),
+                        // section 3 - Basic Information
+                        _analysisCompleted
+                            ? Container(
+                                width: width * 0.9,
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xffF7F7F7),
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.2),
+                                      spreadRadius: 5,
+                                      blurRadius: 7,
+                                      offset: const Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  children: [
+                                    Center(
+                                      child: Text(
+                                        "General Details",
+                                        style: GoogleFonts.ptSans(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.w700,
+                                          color: const Color(0xff0b3f63),
+                                        ),
+                                      ),
+                                    ),
+                                    customeSpace(height: 12),
+                                    Column(
+                                      children: [
+                                        _buildTextField(
+                                          _schoolController,
+                                          "School",
+                                          false,
+                                          "Please enter school name",
+                                        ),
+                                        // const SizedBox(
+                                        //   height: 8,
+                                        // ),
+                                        _buildTextField(
+                                          _departmentController,
+                                          "Department",
+                                          false,
+                                          "Please enter department name",
+                                        ),
+                                      ],
+                                    ),
+                                    // customeSpace(height: 8),
+                                    Column(
+                                      children: [
+                                        _buildTextField(
+                                            _titleController,
+                                            'Event Title',
+                                            false,
+                                            "Please enter event title"),
+                                        // const SizedBox(
+                                        //   height: 8,
+                                        // ),
+                                        _buildTextField(
+                                            _venueController,
+                                            'Event Venue',
+                                            false,
+                                            "Please enter event venue"),
+                                      ],
+                                    ),
+                                    customeSpace(height: 8),
+                                    Column(
+                                      children: [
+                                        buildDateFormField(
+                                            context, 'Please select date'),
+                                        const SizedBox(
+                                          height: 12,
+                                        ),
+                                        buildTimeFormField(
+                                            context, 'Please select time'),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : const SizedBox.shrink(),
+                        // section 3.1 - Additional Information of Event as input
+                        _additionalInformation
+                            ? Container(
+                                width: width * 0.9,
+                                padding: const EdgeInsets.all(12),
+                                margin: EdgeInsets.only(top: height * 0.05),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xffF7F7F7),
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.2),
+                                      spreadRadius: 5,
+                                      blurRadius: 7,
+                                      offset: const Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  children: [
+                                    Center(
+                                      child: Text(
+                                        "Please provide additional information",
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.ptSans(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.w700,
+                                          color: const Color(0xff0b3f63),
+                                        ),
+                                      ),
+                                    ),
+                                    customeSpace(height: 12),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: buildDropdownButtonFormField(
+                                            options: events,
+                                            selectedValue:
+                                                eventTypeValueListenable,
+                                            hintText: "Event Type",
+                                            validationMessage:
+                                                "Please Select event type",
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 24,
+                                        ),
+                                        Expanded(
+                                          child: buildDropdownButtonFormField(
+                                            options: eventModes,
+                                            selectedValue:
+                                                eventModeValueListenable,
+                                            hintText: "Event Mode",
+                                            validationMessage:
+                                                "Please Select event mode",
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    customeSpace(height: 12),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: buildDropdownButtonFormField(
+                                              options: participants,
+                                              selectedValue:
+                                                  participantTypeValueListenable,
+                                              hintText: "Participant type",
+                                              validationMessage:
+                                                  "please select participant type"),
+                                        ),
+                                        const SizedBox(
+                                          width: 24,
+                                        ),
+                                        Expanded(
+                                          child: _buildTextField(
+                                              _noOfParticipantsController,
+                                              'Number of Participants',
+                                              false,
+                                              "Please enter number of participants"),
+                                        ),
+                                      ],
+                                    ),
+                                    customeSpace(height: 12),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: _buildTextField(
+                                              _eventDescriptionGeminiPromptController,
+                                              'Event Description',
+                                              true,
+                                              "Please enter Event Description"),
+                                        ),
+                                      ],
+                                    ),
+                                    customeSpace(
+                                      height: 20,
+                                    ),
+                                    Center(
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          extractEventDetails(context);
+                                        },
+                                        child: const Text(
+                                          "Generate Synopsis Information",
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : const SizedBox.shrink(),
+                        // section 3.2 - Generated Information
+                        _isEventDetailsGenerated
+                            ? Container(
+                                width: width * 0.9,
+                                padding: const EdgeInsets.all(12),
+                                margin: EdgeInsets.only(top: height * 0.05),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xffF7F7F7),
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.2),
+                                      spreadRadius: 5,
+                                      blurRadius: 7,
+                                      offset: const Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  children: [
+                                    Center(
+                                      child: Text(
+                                        "Synopsis Details",
+                                        style: GoogleFonts.ptSans(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.w700,
+                                          color: const Color(0xff0b3f63),
+                                        ),
+                                      ),
+                                    ),
+                                    customeSpace(height: 12),
+                                    _buildTextField(
+                                      _highlightsController,
+                                      'Highlights',
+                                      true,
+                                      "Please add event highlights",
+                                    ),
+                                    customeSpace(height: 8),
+                                    _buildTextField(
+                                      _keyTakeawaysController,
+                                      'Key Takeaways',
+                                      true,
+                                      "Please enter key takeaways",
+                                    ),
+                                    customeSpace(height: 8),
+                                    _buildTextField(
+                                      _summaryController,
+                                      'Summary',
+                                      true,
+                                      "Please enter event summary",
+                                    ),
+                                    customeSpace(height: 8),
+                                    _buildTextField(
+                                      _followUpController,
+                                      'Follow-Up',
+                                      true,
+                                      "Please enter follow-up",
+                                    ),
+                                    customeSpace(height: 8),
+                                    _buildTextField(
+                                      _impactAnalysisController,
+                                      'Impact Analysis',
+                                      true,
+                                      "Please add event report brief description",
+                                    ),
+                                    customeSpace(height: 20),
+                                  ],
+                                ),
+                              )
+                            : const SizedBox.shrink(),
+                        // section 4 - Speaker Details and Photos
+                        _isEventDetailsGenerated
+                            ? Container(
+                                width: width * 0.9,
+                                padding: const EdgeInsets.all(12),
+                                margin: EdgeInsets.only(top: height * 0.05),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xffF7F7F7),
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.2),
+                                      spreadRadius: 5,
+                                      blurRadius: 7,
+                                      offset: const Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  children: [
+                                    Center(
+                                      child: Text(
+                                        "Repporteur Details",
+                                        style: GoogleFonts.ptSans(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.w700,
+                                          color: const Color(0xff0b3f63),
+                                        ),
+                                      ),
+                                    ),
+                                    customeSpace(height: 12),
+                                    Column(
+                                      children: [
+                                        _buildTextField(
+                                            _rapporteurNameController,
+                                            'Rapporteur Name',
+                                            false,
+                                            "Please add rapporteur name"),
+                                        const SizedBox(
+                                          height: 12,
+                                        ),
+                                        _buildTextField(
+                                            _rapporteurEmailController,
+                                            'Rapporteur Email',
+                                            false,
+                                            "Please add rapporteur email"),
+                                      ],
+                                    ),
+                                    customeSpace(height: 8),
+                                    customeSpace(height: 20),
+                                    const Divider(),
+                                    customeSpace(height: 12),
+                                    Center(
+                                      child: Text(
+                                        "Speaker Details",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge,
+                                      ),
+                                    ),
+                                    customeSpace(height: 24),
+                                    Row(
+                                      children: [
+                                        ..._buildSpeakerDetails(),
+                                        const SizedBox(
+                                          width: 12,
+                                        ),
+                                      ],
+                                    ),
+                                    customeSpace(height: 16),
+                                    Center(
+                                      child: ElevatedButton(
+                                        onPressed: _addSpeaker,
+                                        child: const Text('Add Speaker'),
+                                      ),
+                                    ),
+                                    customeSpace(height: 20),
+                                    const Divider(),
+                                    customeSpace(height: 12),
+                                    // all images
+                                    Column(
+                                      children: [
+                                        Column(
+                                          children: [
+                                            geoTaggedImageUnit8 == null
+                                                ? GestureDetector(
+                                                    onTap: selectGeoTaggedImage,
+                                                    child: DottedBorder(
+                                                      radius:
+                                                          const Radius.circular(
+                                                              10),
+                                                      dashPattern: const [
+                                                        10,
+                                                        4
+                                                      ],
+                                                      borderType:
+                                                          BorderType.RRect,
+                                                      strokeCap:
+                                                          StrokeCap.round,
+                                                      child: Container(
+                                                        width: double.infinity,
+                                                        height: 150,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          // color: Colors.red,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                        ),
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            const Icon(
+                                                              Icons
+                                                                  .folder_open_outlined,
+                                                              size: 40,
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 15,
+                                                            ),
+                                                            Text(
+                                                              "Upload GeoTag Image",
+                                                              style: TextStyle(
+                                                                fontSize: 15,
+                                                                color: Colors
+                                                                    .grey
+                                                                    .shade400,
+                                                              ),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Center(
+                                                    child: Image.memory(
+                                                      geoTaggedImageUnit8!,
+                                                      height: 300,
+                                                      width: 300,
+                                                    ),
+                                                  ),
+                                            customeSpace(height: 12),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceAround,
+                                              children: [
+                                                ElevatedButton.icon(
+                                                  onPressed: submitted == true
+                                                      ? null
+                                                      : clearGeoTaggedImage,
+                                                  label: const Text(
+                                                    "Clear",
+                                                  ),
+                                                  icon: const Icon(
+                                                      Icons.cancel_outlined),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 12,
+                                        ),
+                                        Column(
+                                          children: [
+                                            feedBackAnalysisImageUnit8 == null
+                                                ? GestureDetector(
+                                                    onTap:
+                                                        selectFeedbackFormImage,
+                                                    child: DottedBorder(
+                                                      radius:
+                                                          const Radius.circular(
+                                                              10),
+                                                      dashPattern: const [
+                                                        10,
+                                                        4
+                                                      ],
+                                                      borderType:
+                                                          BorderType.RRect,
+                                                      strokeCap:
+                                                          StrokeCap.round,
+                                                      child: Container(
+                                                        width: double.infinity,
+                                                        height: 150,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          // color: Colors.red,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                        ),
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            const Icon(
+                                                              Icons
+                                                                  .folder_open_outlined,
+                                                              size: 40,
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 15,
+                                                            ),
+                                                            Text(
+                                                              "Upload Feedback Image",
+                                                              style: TextStyle(
+                                                                fontSize: 15,
+                                                                color: Colors
+                                                                    .grey
+                                                                    .shade400,
+                                                              ),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Center(
+                                                    child: Image.memory(
+                                                      feedBackAnalysisImageUnit8!,
+                                                      height: 300,
+                                                      width: 300,
+                                                    ),
+                                                  ),
+                                            customeSpace(height: 12),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceAround,
+                                              children: [
+                                                ElevatedButton.icon(
+                                                  onPressed: submitted == true
+                                                      ? null
+                                                      : clearFeedbackFormImage,
+                                                  label: const Text(
+                                                    "Clear",
+                                                  ),
+                                                  icon: const Icon(
+                                                      Icons.cancel_outlined),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    customeSpace(height: 32),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            children: [
+                                              activityImageUnit8 == null
+                                                  ? GestureDetector(
+                                                      onTap:
+                                                          selectActivityImage,
+                                                      child: DottedBorder(
+                                                        radius: const Radius
+                                                            .circular(10),
+                                                        dashPattern: const [
+                                                          10,
+                                                          4
+                                                        ],
+                                                        borderType:
+                                                            BorderType.RRect,
+                                                        strokeCap:
+                                                            StrokeCap.round,
+                                                        child: Container(
+                                                          width:
+                                                              double.infinity,
+                                                          height: 150,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            // color: Colors.red,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                          ),
+                                                          child: Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              const Icon(
+                                                                Icons
+                                                                    .folder_open_outlined,
+                                                                size: 40,
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 15,
+                                                              ),
+                                                              Text(
+                                                                "Upload Activity Image",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 15,
+                                                                  color: Colors
+                                                                      .grey
+                                                                      .shade400,
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : Center(
+                                                      child: Image.memory(
+                                                        activityImageUnit8!,
+                                                        height: 300,
+                                                        width: 300,
+                                                      ),
+                                                    ),
+                                              customeSpace(height: 12),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceAround,
+                                                children: [
+                                                  ElevatedButton.icon(
+                                                    onPressed: submitted == true
+                                                        ? null
+                                                        : clearActivityImage,
+                                                    label: const Text(
+                                                      "Clear",
+                                                    ),
+                                                    icon: const Icon(
+                                                        Icons.cancel_outlined),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    customeSpace(height: 32),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            children: [
+                                              attendanceImageUnit8 == null
+                                                  ? GestureDetector(
+                                                      onTap:
+                                                          selectAttendanceImage,
+                                                      child: DottedBorder(
+                                                        radius: const Radius
+                                                            .circular(10),
+                                                        dashPattern: const [
+                                                          10,
+                                                          4
+                                                        ],
+                                                        borderType:
+                                                            BorderType.RRect,
+                                                        strokeCap:
+                                                            StrokeCap.round,
+                                                        child: Container(
+                                                          width:
+                                                              double.infinity,
+                                                          height: 150,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            // color: Colors.red,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                          ),
+                                                          child: Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              const Icon(
+                                                                Icons
+                                                                    .folder_open_outlined,
+                                                                size: 40,
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 15,
+                                                              ),
+                                                              Text(
+                                                                "Upload Attendance Image",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 15,
+                                                                  color: Colors
+                                                                      .grey
+                                                                      .shade400,
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : Center(
+                                                      child: Image.memory(
+                                                        attendanceImageUnit8!,
+                                                        height: 300,
+                                                        width: 300,
+                                                      ),
+                                                    ),
+                                              customeSpace(height: 12),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceAround,
+                                                children: [
+                                                  ElevatedButton.icon(
+                                                    onPressed: submitted == true
+                                                        ? null
+                                                        : clearAttendanceImage,
+                                                    label: const Text(
+                                                      "Clear",
+                                                    ),
+                                                    icon: const Icon(
+                                                        Icons.cancel_outlined),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : const SizedBox.shrink(),
+                        customeSpace(height: height * 0.05),
+                        _isEventDetailsGenerated
+                            ? Container(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 24),
+                                width: width * 0.8,
+                                child: ElevatedButton(
+                                  style: ButtonStyle(
+                                    padding: WidgetStateProperty.all(
+                                      const EdgeInsets.symmetric(
+                                        horizontal: 24,
+                                        vertical: 16,
+                                      ),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    if (formKey.currentState!.validate()) {
+                                      _generatePdf(context);
+                                    } else {
+                                      Get.snackbar("Error",
+                                          "Please Enter all the details");
+                                    }
+                                    // _generatePdf(context);
+                                  },
+                                  child: const Text('Generate PDF'),
+                                ),
+                              )
+                            : const SizedBox.shrink(),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ));
   }
 
   List<Widget> _buildSpeakerDetails() {
@@ -1712,6 +1826,9 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
         ),
         validator: (value) {
           if (value == null || value.isEmpty) {
+            return validationMessage;
+          }
+          if (value.trim() == "N/A") {
             return validationMessage;
           }
           return null;
@@ -1878,32 +1995,39 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
     );
   }
 
-  pw.TableRow _buildTableRow(String label, String value) {
+  pw.TableRow _buildTableRow(
+      String label, String value, pw.Font ttf, pw.Font boldTtf) {
     return pw.TableRow(
       children: [
         pw.Container(
           width: MediaQuery.of(context).size.width * 0.3,
           padding: const pw.EdgeInsets.all(4),
           child: pw.Text(label,
-              style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+              style:
+                  pw.TextStyle(fontWeight: pw.FontWeight.bold, font: boldTtf)),
         ),
         pw.Container(
           width: MediaQuery.of(context).size.width * 0.7,
           padding: const pw.EdgeInsets.all(4),
-          child: pw.Text(value, textAlign: pw.TextAlign.justify),
+          child: pw.Text(
+            value,
+            textAlign: pw.TextAlign.justify,
+            style: pw.TextStyle(font: ttf),
+          ),
         ),
       ],
     );
   }
 
-  pw.Widget _buildTextBlock(String title, String content) {
+  pw.Widget _buildTextBlock(
+      String title, String content, pw.Font ttf, pw.Font boldTtf) {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
-        pw.Text(title,
-            style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+        pw.Text(title, style: pw.TextStyle(font: boldTtf, fontSize: 14)),
         pw.SizedBox(height: 8),
-        pw.Text(content, textAlign: pw.TextAlign.justify),
+        pw.Text(content,
+            textAlign: pw.TextAlign.justify, style: pw.TextStyle(font: ttf)),
         pw.SizedBox(height: 16),
       ],
     );
@@ -1933,12 +2057,14 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
     final pw.MemoryImage posterPdfImage = pw.MemoryImage(posterImageBytes);
 
     // Update with actual image URL
-    // final String imageUrl = eventReport.poster; NOTE: Commented
+    // final String imageUrl = eventReport.poster; //NOTE: Commented
 
     // Download the image
-    // final Uint8List posterImageBytes = await _downloadImage(imageUrl); NOTE: Commented
-    // final pw.MemoryImage posterPdfImage = pw.MemoryImage(posterImageBytes); NOTE: Commented
+    // final Uint8List posterImageBytes = await _downloadImage(imageUrl); //NOTE: Commented
+    // final pw.MemoryImage posterPdfImage = pw.MemoryImage(posterImageBytes); //NOTE: Commented
 
+    final ttf = pw.Font.ttf(await rootBundle.load("fonts/georgia.ttf"));
+    final boldTtf = pw.Font.ttf(await rootBundle.load("fonts/georgiab.ttf"));
     pdf.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
@@ -1947,94 +2073,100 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
             pw.Center(
               child: pw.Column(
                 children: [
-                  pw.Text("School of Sciences",
+                  pw.Text(_schoolController.text,
                       style: pw.TextStyle(
-                          fontSize: 16, fontWeight: pw.FontWeight.bold)),
-                  pw.Text("Department of Computer Science",
+                          font: boldTtf,
+                          fontSize: 16,
+                          fontWeight: pw.FontWeight.bold)),
+                  pw.Text(_departmentController.text,
                       style: pw.TextStyle(
-                          fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                          font: boldTtf,
+                          fontSize: 14,
+                          fontWeight: pw.FontWeight.bold)),
                   pw.Text('CHRIST (Deemed to be University), Bangalore',
                       style: pw.TextStyle(
-                          fontSize: 12, fontWeight: pw.FontWeight.bold)),
+                          font: ttf,
+                          fontSize: 12,
+                          fontWeight: pw.FontWeight.bold)),
                   pw.SizedBox(height: 8),
                   pw.Text('Activity Report',
                       style: pw.TextStyle(
-                          fontSize: 18, fontWeight: pw.FontWeight.bold)),
+                          font: boldTtf,
+                          fontSize: 18,
+                          fontWeight: pw.FontWeight.bold)),
                 ],
               ),
             ),
             pw.SizedBox(height: height * 0.02),
             pw.Text('General Information',
-                style:
-                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                style: pw.TextStyle(font: boldTtf, fontSize: 14)),
             pw.SizedBox(height: height * 0.01),
             pw.Table(
               border: pw.TableBorder.all(),
               children: [
+                _buildTableRow('Type of Activity',
+                    eventTypeValueListenable.value!, ttf, boldTtf),
+                _buildTableRow('Title of the Activity', _titleController.text,
+                    ttf, boldTtf),
+                _buildTableRow('Date/s', _dateController.text, ttf, boldTtf),
+                _buildTableRow('Time', _timeController.text, ttf, boldTtf),
+                _buildTableRow('Venue', _venueController.text, ttf, boldTtf),
                 _buildTableRow(
-                  'Type of Activity',
-                  eventTypeValueListenable.value!,
-                ),
-                _buildTableRow('Title of the Activity', _titleController.text),
-                _buildTableRow('Date/s', _dateController.text),
-                _buildTableRow('Time', _timeController.text),
-                _buildTableRow('Venue', _venueController.text),
+                    'Mode', eventModeValueListenable.value!, ttf, boldTtf),
               ],
             ),
             pw.SizedBox(height: height * 0.02),
             _speakerNameControllers.isEmpty
                 ? pw.SizedBox()
                 : pw.Text('Speaker/Guest/Presenter Details',
-                    style: pw.TextStyle(
-                        fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                    style: pw.TextStyle(font: boldTtf, fontSize: 14)),
             _speakerNameControllers.isEmpty
                 ? pw.SizedBox()
                 : pw.SizedBox(height: height * 0.02),
-            ..._buildSpeakerDetailsPdf(),
+            ..._buildSpeakerDetailsPdf(ttf, boldTtf),
             pw.SizedBox(height: height * 0.02),
             pw.Text('Participants Profile',
-                style:
-                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                style: pw.TextStyle(font: boldTtf, fontSize: 14)),
             pw.SizedBox(height: height * 0.01),
             pw.Table(
               border: pw.TableBorder.all(),
               children: [
                 _buildTableRow('Type of Participants',
-                    participantTypeValueListenable.value!),
-                _buildTableRow(
-                    'No. of Participants', _noOfParticipantsController.text),
+                    participantTypeValueListenable.value!, ttf, boldTtf),
+                _buildTableRow('No. of Participants',
+                    _noOfParticipantsController.text, ttf, boldTtf),
               ],
             ),
             pw.SizedBox(height: height * 0.02),
             pw.Text('Synopsis of the Activity (Description)',
-                style:
-                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                style: pw.TextStyle(font: boldTtf, fontSize: 14)),
             pw.SizedBox(height: height * 0.02),
             pw.Table(
               border: pw.TableBorder.all(),
               children: [
-                _buildTableRow(
-                    'Highlights of Activity', _highlightsController.text),
-                _buildTableRow('Key Takeaways', _keyTakeawaysController.text),
-                _buildTableRow('Summary Of Activity', _summaryController.text),
-                _buildTableRow(
-                    'Follow-up Plan, if any', _followUpController.text),
-                _buildTableRow(
-                    'Impact Analysis', _impactAnalysisController.text)
+                _buildTableRow('Highlights of Activity',
+                    _highlightsController.text, ttf, boldTtf),
+                _buildTableRow('Key Takeaways', _keyTakeawaysController.text,
+                    ttf, boldTtf),
+                _buildTableRow('Summary Of Activity', _summaryController.text,
+                    ttf, boldTtf),
+                _buildTableRow('Follow-up Plan, if any',
+                    _followUpController.text, ttf, boldTtf),
+                _buildTableRow('Impact Analysis',
+                    _impactAnalysisController.text, ttf, boldTtf)
               ],
             ),
             pw.SizedBox(height: height * 0.03),
             pw.Text('Rapporteur',
-                style:
-                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                style: pw.TextStyle(font: boldTtf, fontSize: 14)),
             pw.SizedBox(height: 8),
             pw.Table(
               border: pw.TableBorder.all(),
               children: [
-                _buildTableRow(
-                    'Rapporteur Name', _rapporteurNameController.text),
-                _buildTableRow(
-                    'Rapporteur Email', _rapporteurEmailController.text),
+                _buildTableRow('Rapporteur Name',
+                    _rapporteurNameController.text, ttf, boldTtf),
+                _buildTableRow('Rapporteur Email',
+                    _rapporteurEmailController.text, ttf, boldTtf),
               ],
             ),
           ];
@@ -2050,13 +2182,12 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                _buildTextBlock(
-                    'Event Report', _eventDescriptionController.text),
+                _buildTextBlock('Event Report',
+                    _eventDescriptionController.text, ttf, boldTtf),
                 _speakerNameControllers.isEmpty
                     ? pw.SizedBox()
                     : pw.Text('Speakers Profile',
-                        style: pw.TextStyle(
-                            fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                        style: pw.TextStyle(font: boldTtf, fontSize: 14)),
                 pw.SizedBox(height: 8),
                 for (int i = 0; i < _speakerBioControllers.length; i++)
                   pw.Column(
@@ -2097,14 +2228,16 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
               children: [
                 pw.Text('Geo Tagged Image',
                     style: pw.TextStyle(
-                        fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                      font: boldTtf,
+                      fontSize: 14,
+                    )),
                 pw.SizedBox(height: 12),
                 pw.Center(
                     child: pw.SizedBox(
                   height: 350,
                   width: 500,
                   child: pw.Image(
-                    fit: pw.BoxFit.contain,
+                    fit: pw.BoxFit.fill,
                     geoPdfImage,
                   ),
                 )),
@@ -2124,14 +2257,16 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
             children: [
               pw.Text('Activity Image',
                   style: pw.TextStyle(
-                      fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                    font: boldTtf,
+                    fontSize: 14,
+                  )),
               pw.SizedBox(height: 12),
               pw.Center(
                   child: pw.SizedBox(
                 height: 350,
                 width: 500,
                 child: pw.Image(
-                  fit: pw.BoxFit.contain,
+                  fit: pw.BoxFit.fill,
                   activityPdfImage,
                 ),
               )),
@@ -2141,7 +2276,7 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
       ),
     );
 
-// New page for Feedback Form Image
+    // New page for Feedback Form Image
     pdf.addPage(
       pw.Page(
         build: (pw.Context context) {
@@ -2150,7 +2285,9 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
             children: [
               pw.Text('Attendence Image',
                   style: pw.TextStyle(
-                      fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                    font: boldTtf,
+                    fontSize: 14,
+                  )),
               pw.SizedBox(height: 12),
               pw.Center(
                   child: pw.SizedBox(
@@ -2167,7 +2304,7 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
       ),
     );
 
-// New page for Feedback Form Image
+    // New page for Feedback Form Image
     pdf.addPage(
       pw.Page(
         build: (pw.Context context) {
@@ -2176,14 +2313,16 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
             children: [
               pw.Text('FeedBack Form Image',
                   style: pw.TextStyle(
-                      fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                    font: boldTtf,
+                    fontSize: 14,
+                  )),
               pw.SizedBox(height: 12),
               pw.Center(
                   child: pw.SizedBox(
                 height: 350,
                 width: 500,
                 child: pw.Image(
-                  fit: pw.BoxFit.contain,
+                  fit: pw.BoxFit.fill,
                   feedbackPdfImage,
                 ),
               )),
@@ -2202,7 +2341,9 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
               pw.Text('Event Poster',
                   textAlign: pw.TextAlign.start,
                   style: pw.TextStyle(
-                      fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                    font: boldTtf,
+                    fontSize: 14,
+                  )),
               pw.SizedBox(height: 12),
               pw.Center(
                   child: pw.SizedBox(
@@ -2220,34 +2361,46 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
     );
 
     try {
-      Get.dialog(
-        Center(
-          child: Container(
-            padding: const EdgeInsets.all(16.0), // Padding inside the container
-            decoration: BoxDecoration(
-              color: Colors.white, // Background color of the dialog
-              borderRadius:
-                  BorderRadius.circular(12.0), // Rounded corners (optional)
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Dialog(
+            backgroundColor:
+                Colors.transparent, // Transparent background for the dialog
+            child: Center(
+              child: Container(
+                padding:
+                    const EdgeInsets.all(20.0), // Padding inside the container
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(
+                      0.9), // Slightly transparent white background
+                  borderRadius: BorderRadius.circular(10.0), // Rounded corners
+                ),
+                child: const Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircularProgressIndicator(), // Loading indicator
+                    SizedBox(height: 20), // Space between indicator and text
+                    Text(
+                      "Creating PDF...",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87, // Text color
+                      ),
+                      textAlign: TextAlign.center, // Center-align the text
+                    ), // Text below the loader
+                  ],
+                ),
+              ),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: const [
-                CircularProgressIndicator(), // Loading indicator
-                SizedBox(height: 16), // Space between indicator and text
-                Text(
-                  "Creating PDF...",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ), // Text below the loader
-              ],
-            ),
-          ),
-        ),
-        barrierDismissible:
-            false, // Prevents closing the dialog by tapping outside
+          );
+        },
       );
 
       // Add a 5-second delay after PDF creation
-      await Future.delayed(const Duration(seconds: 5));
+      await Future.delayed(const Duration(seconds: 3));
 
       // Perform the PDF layout operation
       await Printing.layoutPdf(
