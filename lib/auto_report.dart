@@ -396,33 +396,36 @@ class _AutoReportState extends State<AutoReport> {
     return image;
   }
 
-  List<pw.Widget> _buildSpeakerDetailsPdf() {
+  List<pw.Widget> _buildSpeakerDetailsPdf(pw.Font ttf, pw.Font boldTtf) {
     List<pw.Widget> widgets = [];
 
     for (int i = 0; i < _speakerNameControllers.length; i++) {
-      widgets.add(pw.Column(
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: [
-          pw.Text('Speaker ${i + 1} Details',
-              style:
-                  pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold)),
-          pw.Table(
-            border: pw.TableBorder.all(),
-            children: [
-              _buildTableRow('Name', _speakerNameControllers[i].text),
-              _buildTableRow(
-                  'Title/Position', _speakerPositionControllers[i].text),
-              _buildTableRow(
-                  'Organization', _speakerOrganizationControllers[i].text),
-              _buildTableRow(
-                  'Title of Presentation', _speakerTitleControllers[i].text),
-            ],
-          ),
-          pw.SizedBox(
-            height: 12,
-          ),
-        ],
-      ));
+      widgets.add(
+        pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Text(
+              'Speaker ${i + 1} Details',
+              style: pw.TextStyle(
+                  fontSize: 12, fontWeight: pw.FontWeight.bold, font: boldTtf),
+            ),
+            pw.Table(
+              border: pw.TableBorder.all(),
+              children: [
+                _buildTableRow(
+                    'Name', _speakerNameControllers[i].text, ttf, boldTtf),
+                _buildTableRow('Title/Position',
+                    _speakerPositionControllers[i].text, ttf, boldTtf),
+                _buildTableRow('Organization',
+                    _speakerOrganizationControllers[i].text, ttf, boldTtf),
+                _buildTableRow('Title of Presentation',
+                    _speakerTitleControllers[i].text, ttf, boldTtf),
+              ],
+            ),
+            pw.SizedBox(height: 12),
+          ],
+        ),
+      );
     }
     return widgets;
   }
@@ -2133,32 +2136,39 @@ class _AutoReportState extends State<AutoReport> {
     );
   }
 
-  pw.TableRow _buildTableRow(String label, String value) {
+  pw.TableRow _buildTableRow(
+      String label, String value, pw.Font ttf, pw.Font boldTtf) {
     return pw.TableRow(
       children: [
         pw.Container(
           width: MediaQuery.of(context).size.width * 0.3,
           padding: const pw.EdgeInsets.all(4),
           child: pw.Text(label,
-              style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+              style:
+                  pw.TextStyle(fontWeight: pw.FontWeight.bold, font: boldTtf)),
         ),
         pw.Container(
           width: MediaQuery.of(context).size.width * 0.7,
           padding: const pw.EdgeInsets.all(4),
-          child: pw.Text(value, textAlign: pw.TextAlign.justify),
+          child: pw.Text(
+            value,
+            textAlign: pw.TextAlign.justify,
+            style: pw.TextStyle(font: ttf),
+          ),
         ),
       ],
     );
   }
 
-  pw.Widget _buildTextBlock(String title, String content) {
+  pw.Widget _buildTextBlock(
+      String title, String content, pw.Font ttf, pw.Font boldTtf) {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
-        pw.Text(title,
-            style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+        pw.Text(title, style: pw.TextStyle(font: boldTtf, fontSize: 14)),
         pw.SizedBox(height: 8),
-        pw.Text(content, textAlign: pw.TextAlign.justify),
+        pw.Text(content,
+            textAlign: pw.TextAlign.justify, style: pw.TextStyle(font: ttf)),
         pw.SizedBox(height: 16),
       ],
     );
@@ -2194,6 +2204,8 @@ class _AutoReportState extends State<AutoReport> {
     // final Uint8List posterImageBytes = await _downloadImage(imageUrl); //NOTE: Commented
     // final pw.MemoryImage posterPdfImage = pw.MemoryImage(posterImageBytes); //NOTE: Commented
 
+    final ttf = pw.Font.ttf(await rootBundle.load("fonts/georgia.ttf"));
+    final boldTtf = pw.Font.ttf(await rootBundle.load("fonts/georgiab.ttf"));
     pdf.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
@@ -2204,92 +2216,98 @@ class _AutoReportState extends State<AutoReport> {
                 children: [
                   pw.Text(_schoolController.text,
                       style: pw.TextStyle(
-                          fontSize: 16, fontWeight: pw.FontWeight.bold)),
+                          font: boldTtf,
+                          fontSize: 16,
+                          fontWeight: pw.FontWeight.bold)),
                   pw.Text(_departmentController.text,
                       style: pw.TextStyle(
-                          fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                          font: boldTtf,
+                          fontSize: 14,
+                          fontWeight: pw.FontWeight.bold)),
                   pw.Text('CHRIST (Deemed to be University), Bangalore',
                       style: pw.TextStyle(
-                          fontSize: 12, fontWeight: pw.FontWeight.bold)),
+                          font: ttf,
+                          fontSize: 12,
+                          fontWeight: pw.FontWeight.bold)),
                   pw.SizedBox(height: 8),
                   pw.Text('Activity Report',
                       style: pw.TextStyle(
-                          fontSize: 18, fontWeight: pw.FontWeight.bold)),
+                          font: boldTtf,
+                          fontSize: 18,
+                          fontWeight: pw.FontWeight.bold)),
                 ],
               ),
             ),
             pw.SizedBox(height: height * 0.02),
             pw.Text('General Information',
-                style:
-                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                style: pw.TextStyle(font: boldTtf, fontSize: 14)),
             pw.SizedBox(height: height * 0.01),
             pw.Table(
               border: pw.TableBorder.all(),
               children: [
+                _buildTableRow('Type of Activity',
+                    eventTypeValueListenable.value!, ttf, boldTtf),
+                _buildTableRow('Title of the Activity', _titleController.text,
+                    ttf, boldTtf),
+                _buildTableRow('Date/s', _dateController.text, ttf, boldTtf),
+                _buildTableRow('Time', _timeController.text, ttf, boldTtf),
+                _buildTableRow('Venue', _venueController.text, ttf, boldTtf),
                 _buildTableRow(
-                  'Type of Activity',
-                  eventTypeValueListenable.value!,
-                ),
-                _buildTableRow('Title of the Activity', _titleController.text),
-                _buildTableRow('Date/s', _dateController.text),
-                _buildTableRow('Time', _timeController.text),
-                _buildTableRow('Venue', _venueController.text),
+                    'Mode', eventModeValueListenable.value!, ttf, boldTtf),
               ],
             ),
             pw.SizedBox(height: height * 0.02),
             _speakerNameControllers.isEmpty
                 ? pw.SizedBox()
                 : pw.Text('Speaker/Guest/Presenter Details',
-                    style: pw.TextStyle(
-                        fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                    style: pw.TextStyle(font: boldTtf, fontSize: 14)),
             _speakerNameControllers.isEmpty
                 ? pw.SizedBox()
                 : pw.SizedBox(height: height * 0.02),
-            ..._buildSpeakerDetailsPdf(),
+            ..._buildSpeakerDetailsPdf(ttf, boldTtf),
             pw.SizedBox(height: height * 0.02),
             pw.Text('Participants Profile',
-                style:
-                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                style: pw.TextStyle(font: boldTtf, fontSize: 14)),
             pw.SizedBox(height: height * 0.01),
             pw.Table(
               border: pw.TableBorder.all(),
               children: [
                 _buildTableRow('Type of Participants',
-                    participantTypeValueListenable.value!),
-                _buildTableRow(
-                    'No. of Participants', _noOfParticipantsController.text),
+                    participantTypeValueListenable.value!, ttf, boldTtf),
+                _buildTableRow('No. of Participants',
+                    _noOfParticipantsController.text, ttf, boldTtf),
               ],
             ),
             pw.SizedBox(height: height * 0.02),
             pw.Text('Synopsis of the Activity (Description)',
-                style:
-                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                style: pw.TextStyle(font: boldTtf, fontSize: 14)),
             pw.SizedBox(height: height * 0.02),
             pw.Table(
               border: pw.TableBorder.all(),
               children: [
-                _buildTableRow(
-                    'Highlights of Activity', _highlightsController.text),
-                _buildTableRow('Key Takeaways', _keyTakeawaysController.text),
-                _buildTableRow('Summary Of Activity', _summaryController.text),
-                _buildTableRow(
-                    'Follow-up Plan, if any', _followUpController.text),
-                _buildTableRow(
-                    'Impact Analysis', _impactAnalysisController.text)
+                _buildTableRow('Highlights of Activity',
+                    _highlightsController.text, ttf, boldTtf),
+                _buildTableRow('Key Takeaways', _keyTakeawaysController.text,
+                    ttf, boldTtf),
+                _buildTableRow('Summary Of Activity', _summaryController.text,
+                    ttf, boldTtf),
+                _buildTableRow('Follow-up Plan, if any',
+                    _followUpController.text, ttf, boldTtf),
+                _buildTableRow('Impact Analysis',
+                    _impactAnalysisController.text, ttf, boldTtf)
               ],
             ),
             pw.SizedBox(height: height * 0.03),
             pw.Text('Rapporteur',
-                style:
-                    pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                style: pw.TextStyle(font: boldTtf, fontSize: 14)),
             pw.SizedBox(height: 8),
             pw.Table(
               border: pw.TableBorder.all(),
               children: [
-                _buildTableRow(
-                    'Rapporteur Name', _rapporteurNameController.text),
-                _buildTableRow(
-                    'Rapporteur Email', _rapporteurEmailController.text),
+                _buildTableRow('Rapporteur Name',
+                    _rapporteurNameController.text, ttf, boldTtf),
+                _buildTableRow('Rapporteur Email',
+                    _rapporteurEmailController.text, ttf, boldTtf),
               ],
             ),
           ];
@@ -2305,13 +2323,12 @@ class _AutoReportState extends State<AutoReport> {
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                _buildTextBlock(
-                    'Event Report', _eventDescriptionController.text),
+                _buildTextBlock('Event Report',
+                    _eventDescriptionController.text, ttf, boldTtf),
                 _speakerNameControllers.isEmpty
                     ? pw.SizedBox()
                     : pw.Text('Speakers Profile',
-                        style: pw.TextStyle(
-                            fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                        style: pw.TextStyle(font: boldTtf, fontSize: 14)),
                 pw.SizedBox(height: 8),
                 for (int i = 0; i < _speakerBioControllers.length; i++)
                   pw.Column(
@@ -2352,7 +2369,9 @@ class _AutoReportState extends State<AutoReport> {
               children: [
                 pw.Text('Geo Tagged Image',
                     style: pw.TextStyle(
-                        fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                      font: boldTtf,
+                      fontSize: 14,
+                    )),
                 pw.SizedBox(height: 12),
                 pw.Center(
                     child: pw.SizedBox(
@@ -2379,7 +2398,9 @@ class _AutoReportState extends State<AutoReport> {
             children: [
               pw.Text('Activity Image',
                   style: pw.TextStyle(
-                      fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                    font: boldTtf,
+                    fontSize: 14,
+                  )),
               pw.SizedBox(height: 12),
               pw.Center(
                   child: pw.SizedBox(
@@ -2405,7 +2426,9 @@ class _AutoReportState extends State<AutoReport> {
             children: [
               pw.Text('Attendence Image',
                   style: pw.TextStyle(
-                      fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                    font: boldTtf,
+                    fontSize: 14,
+                  )),
               pw.SizedBox(height: 12),
               pw.Center(
                   child: pw.SizedBox(
@@ -2431,7 +2454,9 @@ class _AutoReportState extends State<AutoReport> {
             children: [
               pw.Text('FeedBack Form Image',
                   style: pw.TextStyle(
-                      fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                    font: boldTtf,
+                    fontSize: 14,
+                  )),
               pw.SizedBox(height: 12),
               pw.Center(
                   child: pw.SizedBox(
@@ -2457,7 +2482,9 @@ class _AutoReportState extends State<AutoReport> {
               pw.Text('Event Poster',
                   textAlign: pw.TextAlign.start,
                   style: pw.TextStyle(
-                      fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                    font: boldTtf,
+                    fontSize: 14,
+                  )),
               pw.SizedBox(height: 12),
               pw.Center(
                   child: pw.SizedBox(
