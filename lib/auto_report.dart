@@ -2202,10 +2202,10 @@ class _AutoReportState extends State<AutoReport> {
             pw.Center(
               child: pw.Column(
                 children: [
-                  pw.Text(selectedSchool,
+                  pw.Text(_schoolController.text,
                       style: pw.TextStyle(
                           fontSize: 16, fontWeight: pw.FontWeight.bold)),
-                  pw.Text(selectedDepartment,
+                  pw.Text(_departmentController.text,
                       style: pw.TextStyle(
                           fontSize: 14, fontWeight: pw.FontWeight.bold)),
                   pw.Text('CHRIST (Deemed to be University), Bangalore',
