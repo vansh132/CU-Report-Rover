@@ -54,9 +54,9 @@ class _AutoReportState extends State<AutoReport> {
   final List<TextEditingController> _speakerOrganizationControllers = [];
   final List<TextEditingController> _speakerBioControllers = [];
 
-  bool _analysisCompleted = false;
-  bool _additionalInformation = false;
-  bool _isEventDetailsGenerated = false;
+  bool _analysisCompleted = true;
+  bool _additionalInformation = true;
+  bool _isEventDetailsGenerated = true;
 
   // geoaTagged image
   XFile geoTaggedImage = XFile("");
@@ -78,8 +78,8 @@ class _AutoReportState extends State<AutoReport> {
 
   bool submitted = false;
 
-  String selectedDepartment = 'Department of Computer Science';
-  String selectedSchool = 'School of Sciences';
+  String selectedDepartment = 'Select Department';
+  String selectedSchool = 'Select School';
   List<String> departments = [
     'Department of Computer Science',
     'Department of Mathematics',
@@ -90,16 +90,9 @@ class _AutoReportState extends State<AutoReport> {
   ];
 
   List<String> schools = [
-    'School of Commerce',
-    'School of Social Science',
-    "School of Architecture",
-    "School of Arts and Humanities",
+    "Select School",
     "School of Business and Management",
     "School of Commerce, Finance and Accountancy",
-    "School of Education",
-    "School of Engineering and Technology",
-    "School of Law",
-    "School of Psychological Sciences",
     "School of Sciences",
     "School of Social Sciences",
   ];
@@ -117,6 +110,9 @@ class _AutoReportState extends State<AutoReport> {
       'Department of Commerce',
       'Department of Professional Studies',
     ],
+    'Select School': [
+      'Select Department',
+    ],
     'School of Business and Management': [
       'Department of Business and Management',
       'Department of Hotel Management',
@@ -125,7 +121,6 @@ class _AutoReportState extends State<AutoReport> {
     'School of Social Sciences': [
       'Department of Social Science',
     ],
-    // Add more schools and their respective departments here
   };
 
   // Function to get departments based on the selected school
@@ -151,6 +146,14 @@ class _AutoReportState extends State<AutoReport> {
     "Student",
     "Faculty",
     "Research Scholar",
+  ];
+
+  //Event modes - Online/Offline/Hybrid
+  final eventModeValueListenable = ValueNotifier<String?>(null);
+  List<String> eventModes = [
+    "Online",
+    "Offline",
+    "Hybrid",
   ];
 
   void selectGeoTaggedImage() async {
@@ -772,6 +775,83 @@ class _AutoReportState extends State<AutoReport> {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.all(12),
+        height: 80.0,
+        color: Color(0xffF7F7F7),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      "Concept & Design by: Dr. Ashok Immanual V",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.roboto(
+                        // fontSize: 36,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xff0b3f63),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      "Mentored by: Dr. Helen K. Joy",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.roboto(
+                        // fontSize: 36,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xff0b3f63),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    children: [
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          "Developed by:",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.roboto(
+                            // fontSize: 36,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xff0b3f63),
+                          ),
+                        ),
+                      ),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          "Riya Shah (2347151) & Vansh Shah (2347152)",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.roboto(
+                            // fontSize: 36,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xff0b3f63),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+
+            // SizedBox(height: 10),
+            // Text("Developed by: Vansh Shah (2347152) & Riya Shah (2347151)"),
+            // SizedBox(height: 10),
+          ],
+        ),
+      ),
       body: Container(
         height: height,
         width: width,
@@ -1125,6 +1205,18 @@ class _AutoReportState extends State<AutoReport> {
                                         hintText: "Select Event Type",
                                         validationMessage:
                                             "Please Select event type",
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 24,
+                                    ),
+                                    Expanded(
+                                      child: buildDropdownButtonFormField(
+                                        options: eventModes,
+                                        selectedValue: eventModeValueListenable,
+                                        hintText: "Select Event Mode",
+                                        validationMessage:
+                                            "Please Select event mode",
                                       ),
                                     ),
                                   ],

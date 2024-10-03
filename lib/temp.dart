@@ -61,7 +61,11 @@ class TemporaryDown extends StatelessWidget {
               ),
             ),
             Center(
-              child: Image.asset("assets/images/teamwork.gif"),
+              child: Image.asset(
+                "assets/images/teamwork.gif",
+                height: 76,
+                width: 76,
+              ),
             ),
             Center(
               child: Text(
