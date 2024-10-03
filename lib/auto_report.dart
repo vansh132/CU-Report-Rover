@@ -142,6 +142,7 @@ class _AutoReportState extends State<AutoReport> {
     "Conference",
     "Training",
     "Events",
+    "Outreach Programs",
   ];
 
   //Student/Faculty/Research Scholar
