@@ -78,7 +78,8 @@ class _AutoReportState extends State<AutoReport> {
 
   bool submitted = false;
 
-  final departmentValueListenable = ValueNotifier<String?>(null);
+  String selectedDepartment = 'Department of Computer Science';
+  String selectedSchool = 'School of Sciences';
   List<String> departments = [
     'Department of Computer Science',
     'Department of Mathematics',
@@ -88,9 +89,7 @@ class _AutoReportState extends State<AutoReport> {
     'Department of Life Science',
   ];
 
-  final schoolValueListenable = ValueNotifier<String?>(null);
   List<String> schools = [
-    'School of Science',
     'School of Commerce',
     'School of Social Science',
     "School of Architecture",
@@ -104,6 +103,36 @@ class _AutoReportState extends State<AutoReport> {
     "School of Sciences",
     "School of Social Sciences",
   ];
+
+  // Define the map of schools to their respective departments
+  Map<String, List<String>> schoolDepartments = {
+    'School of Sciences': [
+      'Department of Computer Science',
+      'Department of Mathematics',
+      'Department of Physics',
+      'Department of Chemistry',
+      'Department of Life Science',
+    ],
+    'School of Commerce, Finance and Accountancy': [
+      'Department of Commerce',
+      'Department of Professional Studies',
+    ],
+    'School of Business and Management': [
+      'Department of Business and Management',
+      'Department of Hotel Management',
+      'Department of Tourism Management',
+    ],
+    'School of Social Sciences': [
+      'Department of Social Science',
+    ],
+    // Add more schools and their respective departments here
+  };
+
+  // Function to get departments based on the selected school
+  List<String> getDepartments(String selectedSchool) {
+    // Return the list of departments if the school exists in the map
+    return schoolDepartments[selectedSchool] ?? [];
+  }
 
   // Workshop/Seminar/Conference/Training/Events
   final eventTypeValueListenable = ValueNotifier<String?>(null);
@@ -125,6 +154,15 @@ class _AutoReportState extends State<AutoReport> {
 
   void selectGeoTaggedImage() async {
     var res = await pickGeoTaggedImages();
+    if (res.path.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Please upload an Geotag image",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+      );
+      return;
+    }
     var convertedImage = await res.readAsBytes();
     setState(() {
       geoTaggedImage = res;
@@ -160,6 +198,15 @@ class _AutoReportState extends State<AutoReport> {
 
   void selectFeedbackFormImage() async {
     var res = await pickFeebackFormImages();
+    if (res.path.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Please upload an Feedback image",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+      );
+      return;
+    }
     var convertedImage = await res.readAsBytes();
 
     setState(() {
@@ -194,6 +241,15 @@ class _AutoReportState extends State<AutoReport> {
 
   void selectAttendanceImage() async {
     var res = await pickFeebackFormImages();
+    if (res.path.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Please upload an Attendance image",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+      );
+      return;
+    }
     var convertedImage = await res.readAsBytes();
 
     setState(() {
@@ -228,6 +284,15 @@ class _AutoReportState extends State<AutoReport> {
 
   void selectActivityImage() async {
     var res = await pickActivityImages();
+    if (res.path.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Please upload an Activity image",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+      );
+      return;
+    }
     var convertedImage = await res.readAsBytes();
 
     setState(() {
@@ -265,7 +330,7 @@ class _AutoReportState extends State<AutoReport> {
     if (res.path.isEmpty) {
       Get.snackbar(
         "Error",
-        "Please select an image",
+        "Please Upload Event poster",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.redAccent,
       );
@@ -553,9 +618,33 @@ class _AutoReportState extends State<AutoReport> {
     );
 
     try {
-      // Retrieve title from image
       currentMessage.value = progressMessages[0];
 
+      // // Retrieve title from image
+      // await gemini.textAndImage(
+      //   text:
+      //       "Which school is assosiated with this event? School of Sciences? School of Social Sciences? give answer as plain text",
+      //   images: [_eventPosterForGemini.first],
+      // ).then((value) {
+      //   selectedSchool = value?.content?.parts?.first.text ?? '';
+      //   log(value?.content?.parts?.last.text ?? '');
+      // }).catchError((e) {
+      //   log('textAndImageInput', error: e);
+      // });
+
+      // // Retrieve department from image
+      // await gemini.textAndImage(
+      //   text:
+      //       "Which department is assosiated with this event? Department of Computer Sciences? Department of Mathematics? give answer as plain text",
+      //   images: [_eventPosterForGemini.first],
+      // ).then((value) {
+      //   selectedDepartment = value?.content?.parts?.first.text ?? '';
+      //   log(value?.content?.parts?.last.text ?? '');
+      // }).catchError((e) {
+      //   log('textAndImageInput', error: e);
+      // });
+
+      // Retrieve title from image
       await gemini.textAndImage(
         text: "What is the title of event in image? give answer as plain text",
         images: [_eventPosterForGemini.first],
@@ -829,38 +918,8 @@ class _AutoReportState extends State<AutoReport> {
                                     ),
                                   ),
                                 ),
-                                customeSpace(height: 12),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        "School of Sciences",
-                                        style: GoogleFonts.roboto(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.black,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 24,
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        "Department of Computer Science",
-                                        style: GoogleFonts.roboto(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.black,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                // customeSpace(height: 12),
+
                                 customeSpace(height: 12),
                                 Row(
                                   children: [
@@ -933,6 +992,127 @@ class _AutoReportState extends State<AutoReport> {
                                       color: const Color(0xff0b3f63),
                                     ),
                                   ),
+                                ),
+                                customeSpace(height: 12),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Expanded(
+                                      child: DropdownButtonFormField<String>(
+                                        value:
+                                            selectedSchool, // Set the default value
+                                        decoration: InputDecoration(
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ), // Set the border radius to 24
+                                            borderSide: const BorderSide(
+                                              color: Colors
+                                                  .black45, // You can set the color of the border
+                                              width:
+                                                  1, // Set the width of the border (optional)
+                                            ),
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              11,
+                                            ), // Same border radius for enabled state
+                                            borderSide: const BorderSide(
+                                              color: Colors
+                                                  .black45, // Border color for enabled state
+                                              width: 1,
+                                            ),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              11,
+                                            ), // Same border radius for focused state
+                                            borderSide: const BorderSide(
+                                              color: Colors
+                                                  .black45, // Border color when focused
+                                              width: 1,
+                                            ),
+                                          ),
+                                        ),
+                                        dropdownColor: Colors
+                                            .white, // Set the dropdown background to white
+                                        style: const TextStyle(
+                                          color: Colors
+                                              .black, // Set the text color to black
+                                        ),
+                                        items: schools.map((String school) {
+                                          return DropdownMenuItem<String>(
+                                            value: school,
+                                            child: Text(school),
+                                          );
+                                        }).toList(),
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            selectedSchool = newValue!;
+                                            departments =
+                                                getDepartments(selectedSchool);
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 24,
+                                    ),
+                                    Expanded(
+                                      child: DropdownButtonFormField<String>(
+                                        value: departments
+                                                .contains(selectedDepartment)
+                                            ? selectedDepartment
+                                            : null,
+                                        decoration: InputDecoration(
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                            borderSide: const BorderSide(
+                                              color: Colors.black45,
+                                              width: 1,
+                                            ),
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(11),
+                                            borderSide: const BorderSide(
+                                              color: Colors.black45,
+                                              width: 1,
+                                            ),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(11),
+                                            borderSide: const BorderSide(
+                                              color: Colors.black45,
+                                              width: 1,
+                                            ),
+                                          ),
+                                        ),
+                                        dropdownColor: Colors
+                                            .white, // Set the dropdown background to white
+                                        style: const TextStyle(
+                                          color: Colors
+                                              .black, // Set the text color to black
+                                        ),
+                                        items: departments
+                                            .map((String department) {
+                                          return DropdownMenuItem<String>(
+                                            value: department,
+                                            child: Text(department),
+                                          );
+                                        }).toList(),
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            selectedDepartment = newValue!;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 customeSpace(height: 12),
                                 Row(
@@ -1513,6 +1693,15 @@ class _AutoReportState extends State<AutoReport> {
                                   Get.snackbar(
                                       "Error", "Please Enter all the details");
                                 }
+
+                                if (geoTaggedImageUnit8 == null ||
+                                    feedBackAnalysisImageUnit8 == null ||
+                                    activityImageUnit8 == null ||
+                                    attendanceImageUnit8 == null) {
+                                  Get.snackbar(
+                                      "Error", "Please upload All Images");
+                                  return;
+                                }
                                 // _generatePdf(context);
                               },
                               child: const Text('Generate PDF'),
@@ -1880,10 +2069,10 @@ class _AutoReportState extends State<AutoReport> {
             pw.Center(
               child: pw.Column(
                 children: [
-                  pw.Text("School of Sciences",
+                  pw.Text(selectedSchool,
                       style: pw.TextStyle(
                           fontSize: 16, fontWeight: pw.FontWeight.bold)),
-                  pw.Text("Department of Computer Science",
+                  pw.Text(selectedDepartment,
                       style: pw.TextStyle(
                           fontSize: 14, fontWeight: pw.FontWeight.bold)),
                   pw.Text('CHRIST (Deemed to be University), Bangalore',
@@ -2153,34 +2342,46 @@ class _AutoReportState extends State<AutoReport> {
     );
 
     try {
-      Get.dialog(
-        Center(
-          child: Container(
-            padding: const EdgeInsets.all(16.0), // Padding inside the container
-            decoration: BoxDecoration(
-              color: Colors.white, // Background color of the dialog
-              borderRadius:
-                  BorderRadius.circular(12.0), // Rounded corners (optional)
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Dialog(
+            backgroundColor:
+                Colors.transparent, // Transparent background for the dialog
+            child: Center(
+              child: Container(
+                padding:
+                    const EdgeInsets.all(20.0), // Padding inside the container
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(
+                      0.9), // Slightly transparent white background
+                  borderRadius: BorderRadius.circular(10.0), // Rounded corners
+                ),
+                child: const Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircularProgressIndicator(), // Loading indicator
+                    SizedBox(height: 20), // Space between indicator and text
+                    Text(
+                      "Creating PDF...",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87, // Text color
+                      ),
+                      textAlign: TextAlign.center, // Center-align the text
+                    ), // Text below the loader
+                  ],
+                ),
+              ),
             ),
-            child: const Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CircularProgressIndicator(), // Loading indicator
-                SizedBox(height: 16), // Space between indicator and text
-                Text(
-                  "Creating PDF...",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ), // Text below the loader
-              ],
-            ),
-          ),
-        ),
-        barrierDismissible:
-            false, // Prevents closing the dialog by tapping outside
+          );
+        },
       );
 
       // Add a 5-second delay after PDF creation
-      await Future.delayed(const Duration(seconds: 5));
+      await Future.delayed(const Duration(seconds: 3));
 
       // Perform the PDF layout operation
       await Printing.layoutPdf(
