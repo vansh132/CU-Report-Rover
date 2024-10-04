@@ -13,7 +13,6 @@ class TemporaryDown extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Testing"),
             Image.asset(
               "assets/images/logo.png",
               width: 280,
