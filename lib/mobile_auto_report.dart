@@ -2013,7 +2013,7 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0), // Rounded corners
         ),
-        labelText: 'Enter Date',
+        labelText: 'Date',
         hintText: 'DD-MM-YYYY',
         enabledBorder: OutlineInputBorder(
           borderRadius:
@@ -2058,7 +2058,7 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0), // Rounded corners
         ),
-        labelText: 'Enter Time',
+        labelText: 'Time',
         hintText: 'Hours: minutes',
         enabledBorder: OutlineInputBorder(
           borderRadius:
