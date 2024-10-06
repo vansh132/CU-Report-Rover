@@ -576,6 +576,8 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
   void extractBasicInformation() async {
     // List of progress messages to show
     List<String> progressMessages = [
+      "Extracting School...",
+      "Extracting Department...",
       "Extracting title...",
       "Extracting venue...",
       "Extracting date...",
@@ -639,6 +641,7 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
         log('textAndImageInput', error: e);
       });
 
+      currentMessage.value = progressMessages[1];
       // Retrieve department from image
       await gemini.textAndImage(
         text:
@@ -650,6 +653,8 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
       }).catchError((e) {
         log('textAndImageInput', error: e);
       });
+
+      currentMessage.value = progressMessages[2];
 
       // Retrieve title from image
       await gemini.textAndImage(
@@ -663,7 +668,7 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
       });
 
       // Retrieve venue from image
-      currentMessage.value = progressMessages[1];
+      currentMessage.value = progressMessages[3];
 
       await gemini.textAndImage(
         text: "What is the venue of event in image? give answer as plain text",
@@ -675,7 +680,7 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
         log('textAndImageInput', error: e);
       });
       // Retrieve date from image
-      currentMessage.value = progressMessages[2];
+      currentMessage.value = progressMessages[4];
       await gemini.textAndImage(
         text: "What is the date of event in image? give answer as plain text",
         images: [_eventPosterForGemini.first],
@@ -687,7 +692,7 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
       });
 
       // Retrieve time from image
-      currentMessage.value = progressMessages[3];
+      currentMessage.value = progressMessages[5];
 
       await gemini.textAndImage(
         text:
