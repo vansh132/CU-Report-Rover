@@ -432,9 +432,9 @@ class _AutoReportState extends State<AutoReport> {
 
   void extractEventDetails(BuildContext context) async {
     if (eventTypeValueListenable.value == null ||
-        participantTypeValueListenable.value == null ||
         _noOfParticipantsController.text.isEmpty ||
-        _eventDescriptionGeminiPromptController.text.isEmpty) {
+        _eventDescriptionGeminiPromptController.text.isEmpty ||
+        getSelectedParticipantTypes().isEmpty) {
       Get.snackbar("Error", "Please Enter all the details");
       return;
     }
@@ -774,6 +774,20 @@ class _AutoReportState extends State<AutoReport> {
     });
   }
 
+  // Variables to hold the state of the checkboxes
+  bool isStudent = false;
+  bool isFaculty = false;
+  bool isResearchScholar = false;
+
+  // Function to get selected participant types
+  List<String> getSelectedParticipantTypes() {
+    List<String> selectedTypes = [];
+    if (isStudent) selectedTypes.add('Student');
+    if (isFaculty) selectedTypes.add('Faculty');
+    if (isResearchScholar) selectedTypes.add('Research Scholar');
+    return selectedTypes;
+  }
+
   @override
   Widget build(BuildContext context) {
     // ba944c - yellow
@@ -806,7 +820,7 @@ class _AutoReportState extends State<AutoReport> {
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
-                      "Concept & Design by: Dr. Ashok Immanual V",
+                      "Concept & Design by: Dr. Ashok Immanuel V",
                       textAlign: TextAlign.center,
                       style: GoogleFonts.roboto(
                         // fontSize: 36,
@@ -1262,28 +1276,122 @@ class _AutoReportState extends State<AutoReport> {
                                   ],
                                 ),
                                 customeSpace(height: 12),
+                                Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      "Participant Type",
+                                      textAlign: TextAlign.start,
+                                      style: GoogleFonts.roboto(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w400,
+                                        color: const Color(0xff0b3f63),
+                                      ),
+                                    ),
+                                  ),
+                                ),
                                 Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
                                   children: [
                                     Expanded(
-                                      child: buildDropdownButtonFormField(
-                                          options: participants,
-                                          selectedValue:
-                                              participantTypeValueListenable,
-                                          hintText: "Select participant type",
-                                          validationMessage:
-                                              "please select participant type"),
-                                    ),
-                                    const SizedBox(
-                                      width: 24,
+                                      child: Container(
+                                        margin: const EdgeInsets.all(4),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(12.0),
+                                        ),
+                                        child: CheckboxListTile(
+                                          title: FittedBox(
+                                            fit: BoxFit.scaleDown,
+                                            child: Text(
+                                              "Student",
+                                              style: GoogleFonts.roboto(
+                                                fontSize:
+                                                    18, // Base font size (will scale down if needed)
+                                                fontWeight: FontWeight.w400,
+                                                color: const Color(0xff0b3f63),
+                                              ),
+                                            ),
+                                          ),
+                                          value: isStudent,
+                                          onChanged: (bool? value) {
+                                            setState(() {
+                                              isStudent = value!;
+                                            });
+                                          },
+                                        ),
+                                      ),
                                     ),
                                     Expanded(
-                                      child: _buildTextField(
-                                          _noOfParticipantsController,
-                                          'Number of Participants',
-                                          false,
-                                          "Please enter number of participants"),
+                                      child: Container(
+                                        margin: const EdgeInsets.all(4),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(12.0),
+                                        ),
+                                        child: CheckboxListTile(
+                                          title: FittedBox(
+                                            fit: BoxFit
+                                                .scaleDown, // Ensure text scales down if needed
+                                            child: Text(
+                                              "Faculty",
+                                              style: GoogleFonts.roboto(
+                                                fontSize:
+                                                    18, // Base font size (will scale down if needed)
+                                                fontWeight: FontWeight.w400,
+                                                color: const Color(0xff0b3f63),
+                                              ),
+                                            ),
+                                          ),
+                                          value: isFaculty,
+                                          onChanged: (bool? value) {
+                                            setState(() {
+                                              isFaculty = value!;
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                        margin: const EdgeInsets.all(4),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(12.0),
+                                        ),
+                                        child: CheckboxListTile(
+                                          title: FittedBox(
+                                            fit: BoxFit
+                                                .scaleDown, // Ensure text scales down if needed
+                                            child: Text(
+                                              "Research Scholar",
+                                              style: GoogleFonts.roboto(
+                                                fontSize:
+                                                    18, // Base font size (will scale down if needed)
+                                                fontWeight: FontWeight.w400,
+                                                color: const Color(0xff0b3f63),
+                                              ),
+                                            ),
+                                          ),
+                                          value: isResearchScholar,
+                                          onChanged: (bool? value) {
+                                            setState(() {
+                                              isResearchScholar = value!;
+                                            });
+                                          },
+                                        ),
+                                      ),
                                     ),
                                   ],
+                                ),
+                                customeSpace(height: 12),
+                                _buildTextField(
+                                  _noOfParticipantsController,
+                                  'Number of Participants',
+                                  false,
+                                  "Please enter number of participants",
                                 ),
                                 customeSpace(height: 12),
                                 Row(
@@ -1835,7 +1943,6 @@ class _AutoReportState extends State<AutoReport> {
                                       "Error", "Please upload All Images");
                                   return;
                                 }
-                                // _generatePdf(context);
                               },
                               child: const Text('Generate PDF'),
                             ),
@@ -2197,6 +2304,9 @@ class _AutoReportState extends State<AutoReport> {
     final Uint8List posterImageBytes = await eventPosterImage.readAsBytes();
     final pw.MemoryImage posterPdfImage = pw.MemoryImage(posterImageBytes);
 
+    final selectedTypes = getSelectedParticipantTypes();
+    final selectedType = selectedTypes.join(', ');
+
     // Update with actual image URL
     // final String imageUrl = eventReport.poster; //NOTE: Commented
 
@@ -2272,8 +2382,8 @@ class _AutoReportState extends State<AutoReport> {
             pw.Table(
               border: pw.TableBorder.all(),
               children: [
-                _buildTableRow('Type of Participants',
-                    participantTypeValueListenable.value!, ttf, boldTtf),
+                _buildTableRow(
+                    'Type of Participants', selectedType, ttf, boldTtf),
                 _buildTableRow('No. of Participants',
                     _noOfParticipantsController.text, ttf, boldTtf),
               ],

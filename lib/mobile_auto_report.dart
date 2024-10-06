@@ -432,13 +432,12 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
 
   void extractEventDetails(BuildContext context) async {
     if (eventTypeValueListenable.value == null ||
-        participantTypeValueListenable.value == null ||
         _noOfParticipantsController.text.isEmpty ||
-        _eventDescriptionGeminiPromptController.text.isEmpty) {
+        _eventDescriptionGeminiPromptController.text.isEmpty ||
+        getSelectedParticipantTypes().isEmpty) {
       Get.snackbar("Error", "Please Enter all the details");
       return;
     }
-
     // List of progress messages to show
     List<String> progressMessages = [
       "Generating highlights of event...",
@@ -774,6 +773,20 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
     });
   }
 
+  // Variables to hold the state of the checkboxes
+  bool isStudent = false;
+  bool isFaculty = false;
+  bool isResearchScholar = false;
+
+  // Function to get selected participant types
+  List<String> getSelectedParticipantTypes() {
+    List<String> selectedTypes = [];
+    if (isStudent) selectedTypes.add('Student');
+    if (isFaculty) selectedTypes.add('Faculty');
+    if (isResearchScholar) selectedTypes.add('Research Scholar');
+    return selectedTypes;
+  }
+
   @override
   Widget build(BuildContext context) {
     // final appColors = context.appColors;
@@ -802,7 +815,7 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
               FittedBox(
                 fit: BoxFit.scaleDown,
                 child: Text(
-                  "Concept & Design by: Dr. Ashok Immanual V",
+                  "Concept & Design by: Dr. Ashok Immanuel V",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.roboto(
                     // fontSize: 36,
@@ -1104,20 +1117,156 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
                                       ],
                                     ),
                                     customeSpace(height: 12),
+                                    Container(
+                                      padding: const EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xffF7F7F7),
+                                        borderRadius:
+                                            BorderRadius.circular(12.0),
+                                        border: Border.all(
+                                          color: Colors.black45,
+                                        ),
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(4.0),
+                                            child: Align(
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                "Participant Type",
+                                                textAlign: TextAlign.start,
+                                                style: GoogleFonts.roboto(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w600,
+                                                  color:
+                                                      const Color(0xff0b3f63),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Divider(
+                                            indent: 45,
+                                            endIndent: 45,
+                                            color: Colors.black45,
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                margin: const EdgeInsets.all(4),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          12.0),
+                                                ),
+                                                child: CheckboxListTile(
+                                                  title: FittedBox(
+                                                    fit: BoxFit.scaleDown,
+                                                    child: Text(
+                                                      "Student",
+                                                      style: GoogleFonts.roboto(
+                                                        fontSize:
+                                                            18, // Base font size (will scale down if needed)
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color: const Color(
+                                                            0xff0b3f63),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  value: isStudent,
+                                                  onChanged: (bool? value) {
+                                                    setState(() {
+                                                      isStudent = value!;
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                              Container(
+                                                margin: const EdgeInsets.all(4),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          12.0),
+                                                ),
+                                                child: CheckboxListTile(
+                                                  title: FittedBox(
+                                                    fit: BoxFit
+                                                        .scaleDown, // Ensure text scales down if needed
+                                                    child: Text(
+                                                      "Faculty",
+                                                      style: GoogleFonts.roboto(
+                                                        fontSize:
+                                                            18, // Base font size (will scale down if needed)
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color: const Color(
+                                                            0xff0b3f63),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  value: isFaculty,
+                                                  onChanged: (bool? value) {
+                                                    setState(() {
+                                                      isFaculty = value!;
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                              Container(
+                                                margin: const EdgeInsets.all(4),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          12.0),
+                                                ),
+                                                child: CheckboxListTile(
+                                                  title: FittedBox(
+                                                    fit: BoxFit
+                                                        .scaleDown, // Ensure text scales down if needed
+                                                    child: Text(
+                                                      "Research Scholar",
+                                                      style: GoogleFonts.roboto(
+                                                        fontSize:
+                                                            18, // Base font size (will scale down if needed)
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color: const Color(
+                                                            0xff0b3f63),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  value: isResearchScholar,
+                                                  onChanged: (bool? value) {
+                                                    setState(() {
+                                                      isResearchScholar =
+                                                          value!;
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    customeSpace(height: 12),
                                     Row(
                                       children: [
-                                        Expanded(
-                                          child: buildDropdownButtonFormField(
-                                              options: participants,
-                                              selectedValue:
-                                                  participantTypeValueListenable,
-                                              hintText: "Participant type",
-                                              validationMessage:
-                                                  "please select participant type"),
-                                        ),
-                                        const SizedBox(
-                                          width: 24,
-                                        ),
+                                        // Expanded(
+                                        //   child: buildDropdownButtonFormField(
+                                        //       options: participants,
+                                        //       selectedValue:
+                                        //           participantTypeValueListenable,
+                                        //       hintText: "Participant type",
+                                        //       validationMessage:
+                                        //           "please select participant type"),
+                                        // ),
+                                        // const SizedBox(
+                                        //   width: 24,
+                                        // ),
                                         Expanded(
                                           child: _buildTextField(
                                               _noOfParticipantsController,
@@ -2056,6 +2205,9 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
     final Uint8List posterImageBytes = await eventPosterImage.readAsBytes();
     final pw.MemoryImage posterPdfImage = pw.MemoryImage(posterImageBytes);
 
+    final selectedTypes = getSelectedParticipantTypes();
+    final selectedType = selectedTypes.join(', ');
+
     // Update with actual image URL
     // final String imageUrl = eventReport.poster; //NOTE: Commented
 
@@ -2131,8 +2283,8 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
             pw.Table(
               border: pw.TableBorder.all(),
               children: [
-                _buildTableRow('Type of Participants',
-                    participantTypeValueListenable.value!, ttf, boldTtf),
+                _buildTableRow(
+                    'Type of Participants', selectedType, ttf, boldTtf),
                 _buildTableRow('No. of Participants',
                     _noOfParticipantsController.text, ttf, boldTtf),
               ],
