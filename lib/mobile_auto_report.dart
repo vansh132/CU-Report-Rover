@@ -55,9 +55,9 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
   final List<TextEditingController> _speakerOrganizationControllers = [];
   final List<TextEditingController> _speakerBioControllers = [];
 
-  bool _analysisCompleted = true;
-  bool _additionalInformation = true;
-  bool _isEventDetailsGenerated = true;
+  bool _analysisCompleted = false;
+  bool _additionalInformation = false;
+  bool _isEventDetailsGenerated = false;
 
   // geoaTagged image
   XFile geoTaggedImage = XFile("");
