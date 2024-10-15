@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -59,9 +60,10 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
   bool _additionalInformation = false;
   bool _isEventDetailsGenerated = false;
 
-  // geoaTagged image
-  XFile geoTaggedImage = XFile("");
-  Uint8List? geoTaggedImageUnit8;
+// Geo-tagged images
+  List<XFile> geoTaggedImages = []; // List to store 1 or 2 images
+  List<Uint8List>?
+      geoTaggedImagesUnit8; // List to store byte data of selected images
   // feedback Analysis image
   XFile feedBackAnalysisImage = XFile("");
   Uint8List? feedBackAnalysisImageUnit8;
@@ -159,46 +161,66 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
 
   void selectGeoTaggedImage() async {
     var res = await pickGeoTaggedImages();
-    if (res.path.isEmpty) {
+    if (res.isEmpty) {
       Get.snackbar(
         "Error",
-        "Please upload an Geotag image",
+        "Please upload at least 1 Geotag image",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.redAccent,
       );
       return;
     }
-    var convertedImage = await res.readAsBytes();
+
+    List<Uint8List> convertedImages = [];
+    for (var file in res) {
+      var imageBytes = await file.readAsBytes();
+      convertedImages.add(imageBytes);
+    }
+
     setState(() {
-      geoTaggedImage = res;
-      geoTaggedImageUnit8 = convertedImage;
+      geoTaggedImages = res; // Assuming you store the images in a list.
+      geoTaggedImagesUnit8 =
+          convertedImages; // Storing byte data for selected images.
     });
   }
 
-  void clearGeoTaggedImage() {
+  void clearGeoTaggedImages() {
     setState(() {
-      geoTaggedImage = XFile("");
-      geoTaggedImageUnit8 = null;
+      geoTaggedImages = []; // Clear the list of images.
+      geoTaggedImagesUnit8 = null;
     });
   }
 
-  Future<XFile> pickGeoTaggedImages() async {
-    XFile image = XFile("");
+  Future<List<XFile>> pickGeoTaggedImages() async {
+    List<XFile> images = [];
     try {
       var files = await FilePicker.platform.pickFiles(
         type: FileType.image,
-        allowMultiple: false,
+        allowMultiple: true, // Allow multiple image selection.
       );
 
-      if (files != null && files.files.isNotEmpty) {
-        image = files.files[0].xFile;
+      if (files != null && files.files.isNotEmpty && files.files.length <= 2) {
+        // Handle the web case where `path` is unavailable
+        images = files.files.map((file) {
+          return XFile.fromData(
+            file.bytes!,
+            name: file.name,
+            mimeType: file.extension,
+          );
+        }).toList();
       } else {
-        image = XFile("");
+        Get.snackbar(
+          "Error",
+          "Please select up to 2 images only",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.redAccent,
+        );
+        images = [];
       }
     } catch (e) {
       debugPrint(e.toString());
     }
-    return image;
+    return images;
   }
 
   void selectFeedbackFormImage() async {
@@ -1464,7 +1486,7 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
                                       children: [
                                         Column(
                                           children: [
-                                            geoTaggedImageUnit8 == null
+                                            geoTaggedImagesUnit8 == null
                                                 ? GestureDetector(
                                                     onTap: selectGeoTaggedImage,
                                                     child: DottedBorder(
@@ -1520,11 +1542,59 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
                                                     ),
                                                   )
                                                 : Center(
-                                                    child: Image.memory(
-                                                      geoTaggedImageUnit8!,
-                                                      height: 300,
-                                                      width: 300,
-                                                    ),
+                                                    child: geoTaggedImagesUnit8 !=
+                                                                null &&
+                                                            geoTaggedImagesUnit8!
+                                                                .isNotEmpty
+                                                        ? CarouselSlider(
+                                                            options:
+                                                                CarouselOptions(
+                                                              height:
+                                                                  300.0, // Set the height of the carousel
+                                                              enlargeCenterPage:
+                                                                  true, // Make the currently centered item larger
+                                                              enableInfiniteScroll:
+                                                                  false, // Disable infinite scrolling
+                                                              autoPlay:
+                                                                  false, // Disable automatic sliding
+                                                            ),
+                                                            items: geoTaggedImagesUnit8!
+                                                                .map(
+                                                                    (imageBytes) {
+                                                              return Builder(
+                                                                builder:
+                                                                    (BuildContext
+                                                                        context) {
+                                                                  return Container(
+                                                                    width:
+                                                                        300, // Set width of each image
+                                                                    margin: EdgeInsets.symmetric(
+                                                                        horizontal:
+                                                                            5.0),
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              10.0),
+                                                                    ),
+                                                                    child: Image
+                                                                        .memory(
+                                                                      imageBytes,
+                                                                      fit: BoxFit
+                                                                          .cover, // Scale the image to cover the box
+                                                                    ),
+                                                                  );
+                                                                },
+                                                              );
+                                                            }).toList(),
+                                                          )
+                                                        : Text(
+                                                            "No images selected",
+                                                            style: TextStyle(
+                                                                fontSize: 18,
+                                                                color: Colors
+                                                                    .grey),
+                                                          ),
                                                   ),
                                             customeSpace(height: 12),
                                             Row(
@@ -1534,7 +1604,7 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
                                                 ElevatedButton.icon(
                                                   onPressed: submitted == true
                                                       ? null
-                                                      : clearGeoTaggedImage,
+                                                      : clearGeoTaggedImages,
                                                   label: const Text(
                                                     "Clear",
                                                   ),
@@ -2191,11 +2261,16 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
     var height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     final pdf = pw.Document();
+// Load the image files
+    List<pw.MemoryImage> geoPdfImages =
+        []; // List to store the MemoryImages for PDF
 
-    // Load the image file
-    final Uint8List geoImageBytes = await geoTaggedImage.readAsBytes();
-    final pw.MemoryImage geoPdfImage = pw.MemoryImage(geoImageBytes);
-
+    for (var geoTaggedImage in geoTaggedImages) {
+      final Uint8List geoImageBytes = await geoTaggedImage.readAsBytes();
+      final pw.MemoryImage geoPdfImage = pw.MemoryImage(geoImageBytes);
+      geoPdfImages
+          .add(geoPdfImage); // Add the converted MemoryImage to the list
+    }
     final Uint8List feedbackImageBytes =
         await feedBackAnalysisImage.readAsBytes();
     final pw.MemoryImage feedbackPdfImage = pw.MemoryImage(feedbackImageBytes);
@@ -2375,6 +2450,7 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
     );
 
 // New page for Geo Tagged Image
+
     pdf.addPage(
       pw.Page(
         build: (pw.Context context) {
@@ -2383,21 +2459,25 @@ class _MobileAutoReportState extends State<MobileAutoReport> {
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                pw.Text('Geo Tagged Image',
+                pw.Text('Geo Tagged Images',
                     style: pw.TextStyle(
                       font: boldTtf,
                       fontSize: 14,
                     )),
                 pw.SizedBox(height: 12),
-                pw.Center(
-                    child: pw.SizedBox(
-                  height: 350,
-                  width: 500,
-                  child: pw.Image(
-                    fit: pw.BoxFit.fill,
-                    geoPdfImage,
-                  ),
-                )),
+
+                // Dynamically display geo-tagged images
+                ...geoPdfImages.map((geoPdfImage) => pw.Center(
+                      child: pw.Container(
+                        height: 350,
+                        width: double.infinity,
+                        child: pw.Image(
+                          geoPdfImage,
+                          fit: pw.BoxFit
+                              .contain, // Use BoxFit.contain for better scaling
+                        ),
+                      ),
+                    )),
               ],
             ),
           );

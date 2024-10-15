@@ -49,6 +49,7 @@ dependencies:
   line_icons: ^2.0.3
   google_generative_ai: ^0.4.6
   get: ^4.6.6
+  carousel_slider: ^5.0.0
 
 dev_dependencies:
   flutter_test:
