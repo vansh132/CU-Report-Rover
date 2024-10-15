@@ -64,14 +64,19 @@ class _AutoReportState extends State<AutoReport> {
   List<XFile> geoTaggedImages = []; // List to store 1 or 2 images
   List<Uint8List>?
       geoTaggedImagesUnit8; // List to store byte data of selected images
+// feedback images
+  List<XFile> feedBackAnalysisImages = []; // List to store 1 or 2 images
+  List<Uint8List>?
+      feedBackAnalysisImageUnit8; // List to store byte data of selected images
+// activity images
+  List<XFile> activityImages = []; // List to store 1 or 2 images
+  List<Uint8List>?
+      activityImagesUnit8; // List to store byte data of selected images
+// attendence images
+  List<XFile> attendanceImages = []; // List to store 1 or 2 images
+  List<Uint8List>?
+      attendanceImagesUnit8; // List to store byte data of selected images
 
-  // feedback Analysis image
-  XFile feedBackAnalysisImage = XFile("");
-  Uint8List? feedBackAnalysisImageUnit8;
-  XFile activityImage = XFile("");
-  Uint8List? activityImageUnit8;
-  XFile attendanceImage = XFile("");
-  Uint8List? attendanceImageUnit8;
   XFile eventPosterImage = XFile("");
   Uint8List? eventPosterImageUnit8;
   // speaker images
@@ -224,133 +229,196 @@ class _AutoReportState extends State<AutoReport> {
     return images;
   }
 
-  void selectFeedbackFormImage() async {
+  void selectFeedbackFormImages() async {
     var res = await pickFeebackFormImages();
-    if (res.path.isEmpty) {
+    if (res.isEmpty) {
       Get.snackbar(
         "Error",
-        "Please upload an Feedback image",
+        "Please upload at least 1 Feedback image",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.redAccent,
       );
       return;
     }
-    var convertedImage = await res.readAsBytes();
+
+    List<Uint8List> convertedImages = [];
+    for (var file in res) {
+      var imageBytes = await file.readAsBytes();
+      convertedImages.add(imageBytes);
+    }
 
     setState(() {
-      feedBackAnalysisImage = res;
-      feedBackAnalysisImageUnit8 = convertedImage;
+      feedBackAnalysisImages = res; // Assuming you store the images in a list.
+      feedBackAnalysisImageUnit8 =
+          convertedImages; // Storing byte data for selected images.
     });
   }
 
-  void clearFeedbackFormImage() {
+  void clearFeedbackFormImages() {
     setState(() {
-      feedBackAnalysisImage = XFile("");
+      feedBackAnalysisImages = []; // Clear the list of images.
       feedBackAnalysisImageUnit8 = null;
     });
   }
 
-  Future<XFile> pickFeebackFormImages() async {
-    XFile image = XFile("");
+  Future<List<XFile>> pickFeebackFormImages() async {
+    List<XFile> images = [];
     try {
       var files = await FilePicker.platform.pickFiles(
         type: FileType.image,
-        allowMultiple: false,
+        allowMultiple: true, // Allow multiple image selection.
       );
 
-      if (files != null && files.files.isNotEmpty) {
-        image = files.files[0].xFile;
+      if (files != null && files.files.isNotEmpty && files.files.length <= 2) {
+        // Handle the web case where `path` is unavailable
+        images = files.files.map((file) {
+          return XFile.fromData(
+            file.bytes!,
+            name: file.name,
+            mimeType: file.extension,
+          );
+        }).toList();
+      } else {
+        Get.snackbar(
+          "Error",
+          "Please select up to 2 images only",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.redAccent,
+        );
+        images = [];
       }
     } catch (e) {
       debugPrint(e.toString());
     }
-    return image;
+    return images;
   }
 
-  void selectAttendanceImage() async {
-    var res = await pickFeebackFormImages();
-    if (res.path.isEmpty) {
+  void selectAttendanceImages() async {
+    var res = await pickAttendanceImages();
+    if (res.isEmpty) {
       Get.snackbar(
         "Error",
-        "Please upload an Attendance image",
+        "Please upload at least 1 Attendence Sheet Image",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.redAccent,
       );
       return;
     }
-    var convertedImage = await res.readAsBytes();
+
+    List<Uint8List> convertedImages = [];
+    for (var file in res) {
+      var imageBytes = await file.readAsBytes();
+      convertedImages.add(imageBytes);
+    }
 
     setState(() {
-      attendanceImage = res;
-      attendanceImageUnit8 = convertedImage;
+      attendanceImages = res; // Assuming you store the images in a list.
+      attendanceImagesUnit8 =
+          convertedImages; // Storing byte data for selected images.
     });
   }
 
-  void clearAttendanceImage() {
+  void clearAttendanceImages() {
     setState(() {
-      attendanceImage = XFile("");
-      attendanceImageUnit8 = null;
+      attendanceImages = []; // Clear the list of images.
+      attendanceImagesUnit8 = null;
     });
   }
 
-  Future<XFile> pickAttendanceImages() async {
-    XFile image = XFile("");
+  Future<List<XFile>> pickAttendanceImages() async {
+    List<XFile> images = [];
     try {
       var files = await FilePicker.platform.pickFiles(
         type: FileType.image,
-        allowMultiple: false,
+        allowMultiple: true, // Allow multiple image selection.
       );
 
-      if (files != null && files.files.isNotEmpty) {
-        image = files.files[0].xFile;
+      if (files != null && files.files.isNotEmpty && files.files.length <= 2) {
+        // Handle the web case where `path` is unavailable
+        images = files.files.map((file) {
+          return XFile.fromData(
+            file.bytes!,
+            name: file.name,
+            mimeType: file.extension,
+          );
+        }).toList();
+      } else {
+        Get.snackbar(
+          "Error",
+          "Please select up to 2 images only",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.redAccent,
+        );
+        images = [];
       }
     } catch (e) {
       debugPrint(e.toString());
     }
-    return image;
+    return images;
   }
 
-  void selectActivityImage() async {
+  void selectActivityImages() async {
     var res = await pickActivityImages();
-    if (res.path.isEmpty) {
+    if (res.isEmpty) {
       Get.snackbar(
         "Error",
-        "Please upload an Activity image",
+        "Please upload at least 1 Activity Image",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.redAccent,
       );
       return;
     }
-    var convertedImage = await res.readAsBytes();
+
+    List<Uint8List> convertedImages = [];
+    for (var file in res) {
+      var imageBytes = await file.readAsBytes();
+      convertedImages.add(imageBytes);
+    }
 
     setState(() {
-      activityImage = res;
-      activityImageUnit8 = convertedImage;
+      activityImages = res; // Assuming you store the images in a list.
+      activityImagesUnit8 =
+          convertedImages; // Storing byte data for selected images.
     });
   }
 
-  void clearActivityImage() {
+  void clearActivityImages() {
     setState(() {
-      activityImage = XFile("");
-      activityImageUnit8 = null;
+      activityImages = []; // Clear the list of images.
+      activityImagesUnit8 = null;
     });
   }
 
-  Future<XFile> pickActivityImages() async {
-    XFile image = XFile("");
+  Future<List<XFile>> pickActivityImages() async {
+    List<XFile> images = [];
     try {
       var files = await FilePicker.platform.pickFiles(
         type: FileType.image,
-        allowMultiple: false,
+        allowMultiple: true, // Allow multiple image selection.
       );
 
-      if (files != null && files.files.isNotEmpty) {
-        image = files.files[0].xFile;
+      if (files != null && files.files.isNotEmpty && files.files.length <= 2) {
+        // Handle the web case where `path` is unavailable
+        images = files.files.map((file) {
+          return XFile.fromData(
+            file.bytes!,
+            name: file.name,
+            mimeType: file.extension,
+          );
+        }).toList();
+      } else {
+        Get.snackbar(
+          "Error",
+          "Please select up to 2 images only",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.redAccent,
+        );
+        images = [];
       }
     } catch (e) {
       debugPrint(e.toString());
     }
-    return image;
+    return images;
   }
 
   void selectPosterImage() async {
@@ -1156,128 +1224,6 @@ class _AutoReportState extends State<AutoReport> {
                                   ),
                                 ),
                                 customeSpace(height: 12),
-                                // Row(
-                                //   mainAxisAlignment:
-                                //       MainAxisAlignment.spaceAround,
-                                //   children: [
-                                //     Expanded(
-                                //       child: DropdownButtonFormField<String>(
-                                //         value:
-                                //             selectedSchool, // Set the default value
-                                //         decoration: InputDecoration(
-                                //           border: OutlineInputBorder(
-                                //             borderRadius: BorderRadius.circular(
-                                //               12,
-                                //             ), // Set the border radius to 24
-                                //             borderSide: const BorderSide(
-                                //               color: Colors
-                                //                   .black45, // You can set the color of the border
-                                //               width:
-                                //                   1, // Set the width of the border (optional)
-                                //             ),
-                                //           ),
-                                //           enabledBorder: OutlineInputBorder(
-                                //             borderRadius: BorderRadius.circular(
-                                //               11,
-                                //             ), // Same border radius for enabled state
-                                //             borderSide: const BorderSide(
-                                //               color: Colors
-                                //                   .black45, // Border color for enabled state
-                                //               width: 1,
-                                //             ),
-                                //           ),
-                                //           focusedBorder: OutlineInputBorder(
-                                //             borderRadius: BorderRadius.circular(
-                                //               11,
-                                //             ), // Same border radius for focused state
-                                //             borderSide: const BorderSide(
-                                //               color: Colors
-                                //                   .black45, // Border color when focused
-                                //               width: 1,
-                                //             ),
-                                //           ),
-                                //         ),
-                                //         dropdownColor: Colors
-                                //             .white, // Set the dropdown background to white
-                                //         style: const TextStyle(
-                                //           color: Colors
-                                //               .black, // Set the text color to black
-                                //         ),
-                                //         items: schools.map((String school) {
-                                //           return DropdownMenuItem<String>(
-                                //             value: school,
-                                //             child: Text(school),
-                                //           );
-                                //         }).toList(),
-                                //         onChanged: (String? newValue) {
-                                //           setState(() {
-                                //             selectedSchool = newValue!;
-                                //             departments =
-                                //                 getDepartments(selectedSchool);
-                                //           });
-                                //         },
-                                //       ),
-                                //     ),
-                                //     const SizedBox(
-                                //       width: 24,
-                                //     ),
-                                //     Expanded(
-                                //       child: DropdownButtonFormField<String>(
-                                //         value: departments
-                                //                 .contains(selectedDepartment)
-                                //             ? selectedDepartment
-                                //             : null,
-                                //         decoration: InputDecoration(
-                                //           border: OutlineInputBorder(
-                                //             borderRadius: BorderRadius.circular(
-                                //               12,
-                                //             ),
-                                //             borderSide: const BorderSide(
-                                //               color: Colors.black45,
-                                //               width: 1,
-                                //             ),
-                                //           ),
-                                //           enabledBorder: OutlineInputBorder(
-                                //             borderRadius:
-                                //                 BorderRadius.circular(11),
-                                //             borderSide: const BorderSide(
-                                //               color: Colors.black45,
-                                //               width: 1,
-                                //             ),
-                                //           ),
-                                //           focusedBorder: OutlineInputBorder(
-                                //             borderRadius:
-                                //                 BorderRadius.circular(11),
-                                //             borderSide: const BorderSide(
-                                //               color: Colors.black45,
-                                //               width: 1,
-                                //             ),
-                                //           ),
-                                //         ),
-                                //         dropdownColor: Colors
-                                //             .white, // Set the dropdown background to white
-                                //         style: const TextStyle(
-                                //           color: Colors
-                                //               .black, // Set the text color to black
-                                //         ),
-                                //         items: departments
-                                //             .map((String department) {
-                                //           return DropdownMenuItem<String>(
-                                //             value: department,
-                                //             child: Text(department),
-                                //           );
-                                //         }).toList(),
-                                //         onChanged: (String? newValue) {
-                                //           setState(() {
-                                //             selectedDepartment = newValue!;
-                                //           });
-                                //         },
-                                //       ),
-                                //     ),
-                                //   ],
-                                // ),
-
-                                // customeSpace(height: 12),
                                 Row(
                                   children: [
                                     Expanded(
@@ -1684,10 +1630,10 @@ class _AutoReportState extends State<AutoReport> {
                                                                 return Container(
                                                                   width:
                                                                       300, // Set width of each image
-                                                                  margin: EdgeInsets
+                                                                  margin: const EdgeInsets
                                                                       .symmetric(
-                                                                          horizontal:
-                                                                              5.0),
+                                                                      horizontal:
+                                                                          5.0),
                                                                   decoration:
                                                                       BoxDecoration(
                                                                     borderRadius:
@@ -1705,7 +1651,7 @@ class _AutoReportState extends State<AutoReport> {
                                                             );
                                                           }).toList(),
                                                         )
-                                                      : Text(
+                                                      : const Text(
                                                           "No images selected",
                                                           style: TextStyle(
                                                               fontSize: 18,
@@ -1742,7 +1688,7 @@ class _AutoReportState extends State<AutoReport> {
                                           feedBackAnalysisImageUnit8 == null
                                               ? GestureDetector(
                                                   onTap:
-                                                      selectFeedbackFormImage,
+                                                      selectFeedbackFormImages,
                                                   child: DottedBorder(
                                                     radius:
                                                         const Radius.circular(
@@ -1790,11 +1736,60 @@ class _AutoReportState extends State<AutoReport> {
                                                   ),
                                                 )
                                               : Center(
-                                                  child: Image.memory(
-                                                    feedBackAnalysisImageUnit8!,
-                                                    height: 300,
-                                                    width: 300,
-                                                  ),
+                                                  child: feedBackAnalysisImageUnit8 !=
+                                                              null &&
+                                                          feedBackAnalysisImageUnit8!
+                                                              .isNotEmpty
+                                                      ? CarouselSlider(
+                                                          options:
+                                                              CarouselOptions(
+                                                            height:
+                                                                300.0, // Set the height of the carousel
+                                                            enlargeCenterPage:
+                                                                true, // Make the currently centered item larger
+                                                            enableInfiniteScroll:
+                                                                false, // Disable infinite scrolling
+                                                            autoPlay:
+                                                                false, // Disable automatic sliding
+                                                          ),
+                                                          items: feedBackAnalysisImageUnit8!
+                                                              .map(
+                                                                  (imageBytes) {
+                                                            return Builder(
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                return Container(
+                                                                  width:
+                                                                      300, // Set width of each image
+                                                                  margin: const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          5.0),
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            10.0),
+                                                                  ),
+                                                                  child: Image
+                                                                      .memory(
+                                                                    imageBytes,
+                                                                    fit: BoxFit
+                                                                        .cover, // Scale the image to cover the box
+                                                                  ),
+                                                                );
+                                                              },
+                                                            );
+                                                          }).toList(),
+                                                        )
+                                                      : const Text(
+                                                          "No images selected",
+                                                          style: TextStyle(
+                                                              fontSize: 18,
+                                                              color:
+                                                                  Colors.grey),
+                                                        ),
                                                 ),
                                           customeSpace(height: 12),
                                           Row(
@@ -1804,7 +1799,7 @@ class _AutoReportState extends State<AutoReport> {
                                               ElevatedButton.icon(
                                                 onPressed: submitted == true
                                                     ? null
-                                                    : clearFeedbackFormImage,
+                                                    : clearFeedbackFormImages,
                                                 label: const Text(
                                                   "Clear",
                                                 ),
@@ -1824,9 +1819,9 @@ class _AutoReportState extends State<AutoReport> {
                                     Expanded(
                                       child: Column(
                                         children: [
-                                          activityImageUnit8 == null
+                                          activityImagesUnit8 == null
                                               ? GestureDetector(
-                                                  onTap: selectActivityImage,
+                                                  onTap: selectActivityImages,
                                                   child: DottedBorder(
                                                     radius:
                                                         const Radius.circular(
@@ -1874,11 +1869,60 @@ class _AutoReportState extends State<AutoReport> {
                                                   ),
                                                 )
                                               : Center(
-                                                  child: Image.memory(
-                                                    activityImageUnit8!,
-                                                    height: 300,
-                                                    width: 300,
-                                                  ),
+                                                  child: activityImagesUnit8 !=
+                                                              null &&
+                                                          activityImagesUnit8!
+                                                              .isNotEmpty
+                                                      ? CarouselSlider(
+                                                          options:
+                                                              CarouselOptions(
+                                                            height:
+                                                                300.0, // Set the height of the carousel
+                                                            enlargeCenterPage:
+                                                                true, // Make the currently centered item larger
+                                                            enableInfiniteScroll:
+                                                                false, // Disable infinite scrolling
+                                                            autoPlay:
+                                                                false, // Disable automatic sliding
+                                                          ),
+                                                          items: activityImagesUnit8!
+                                                              .map(
+                                                                  (imageBytes) {
+                                                            return Builder(
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                return Container(
+                                                                  width:
+                                                                      300, // Set width of each image
+                                                                  margin: const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          5.0),
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            10.0),
+                                                                  ),
+                                                                  child: Image
+                                                                      .memory(
+                                                                    imageBytes,
+                                                                    fit: BoxFit
+                                                                        .cover, // Scale the image to cover the box
+                                                                  ),
+                                                                );
+                                                              },
+                                                            );
+                                                          }).toList(),
+                                                        )
+                                                      : const Text(
+                                                          "No images selected",
+                                                          style: TextStyle(
+                                                              fontSize: 18,
+                                                              color:
+                                                                  Colors.grey),
+                                                        ),
                                                 ),
                                           customeSpace(height: 12),
                                           Row(
@@ -1888,7 +1932,7 @@ class _AutoReportState extends State<AutoReport> {
                                               ElevatedButton.icon(
                                                 onPressed: submitted == true
                                                     ? null
-                                                    : clearActivityImage,
+                                                    : clearActivityImages,
                                                 label: const Text(
                                                   "Clear",
                                                 ),
@@ -1906,9 +1950,9 @@ class _AutoReportState extends State<AutoReport> {
                                     Expanded(
                                       child: Column(
                                         children: [
-                                          attendanceImageUnit8 == null
+                                          attendanceImagesUnit8 == null
                                               ? GestureDetector(
-                                                  onTap: selectAttendanceImage,
+                                                  onTap: selectAttendanceImages,
                                                   child: DottedBorder(
                                                     radius:
                                                         const Radius.circular(
@@ -1957,11 +2001,60 @@ class _AutoReportState extends State<AutoReport> {
                                                   ),
                                                 )
                                               : Center(
-                                                  child: Image.memory(
-                                                    attendanceImageUnit8!,
-                                                    height: 300,
-                                                    width: 300,
-                                                  ),
+                                                  child: attendanceImagesUnit8 !=
+                                                              null &&
+                                                          attendanceImagesUnit8!
+                                                              .isNotEmpty
+                                                      ? CarouselSlider(
+                                                          options:
+                                                              CarouselOptions(
+                                                            height:
+                                                                300.0, // Set the height of the carousel
+                                                            enlargeCenterPage:
+                                                                true, // Make the currently centered item larger
+                                                            enableInfiniteScroll:
+                                                                false, // Disable infinite scrolling
+                                                            autoPlay:
+                                                                false, // Disable automatic sliding
+                                                          ),
+                                                          items: attendanceImagesUnit8!
+                                                              .map(
+                                                                  (imageBytes) {
+                                                            return Builder(
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                return Container(
+                                                                  width:
+                                                                      300, // Set width of each image
+                                                                  margin: const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          5.0),
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            10.0),
+                                                                  ),
+                                                                  child: Image
+                                                                      .memory(
+                                                                    imageBytes,
+                                                                    fit: BoxFit
+                                                                        .cover, // Scale the image to cover the box
+                                                                  ),
+                                                                );
+                                                              },
+                                                            );
+                                                          }).toList(),
+                                                        )
+                                                      : const Text(
+                                                          "No images selected",
+                                                          style: TextStyle(
+                                                              fontSize: 18,
+                                                              color:
+                                                                  Colors.grey),
+                                                        ),
                                                 ),
                                           customeSpace(height: 12),
                                           Row(
@@ -1971,7 +2064,7 @@ class _AutoReportState extends State<AutoReport> {
                                               ElevatedButton.icon(
                                                 onPressed: submitted == true
                                                     ? null
-                                                    : clearAttendanceImage,
+                                                    : clearAttendanceImages,
                                                 label: const Text(
                                                   "Clear",
                                                 ),
@@ -2014,8 +2107,8 @@ class _AutoReportState extends State<AutoReport> {
 
                                 if (geoTaggedImagesUnit8!.isEmpty ||
                                     feedBackAnalysisImageUnit8 == null ||
-                                    activityImageUnit8 == null ||
-                                    attendanceImageUnit8 == null) {
+                                    activityImagesUnit8 == null ||
+                                    attendanceImagesUnit8 == null) {
                                   Get.snackbar(
                                       "Error", "Please upload All Images");
                                   return;
@@ -2374,29 +2467,39 @@ class _AutoReportState extends State<AutoReport> {
           .add(geoPdfImage); // Add the converted MemoryImage to the list
     }
 
-    final Uint8List feedbackImageBytes =
-        await feedBackAnalysisImage.readAsBytes();
-    final pw.MemoryImage feedbackPdfImage = pw.MemoryImage(feedbackImageBytes);
+    List<pw.MemoryImage> feedbackAnalysisPdfImages = [];
+    for (var feedbackAnalysisPdfImage in feedBackAnalysisImages) {
+      final Uint8List feedBackAnalysisBytes =
+          await feedbackAnalysisPdfImage.readAsBytes();
+      final pw.MemoryImage feedbackPdfImage =
+          pw.MemoryImage(feedBackAnalysisBytes);
+      feedbackAnalysisPdfImages
+          .add(feedbackPdfImage); // Add the converted MemoryImage to the list
+    }
 
-    final Uint8List activityImageBytes = await activityImage.readAsBytes();
-    final pw.MemoryImage activityPdfImage = pw.MemoryImage(activityImageBytes);
+    List<pw.MemoryImage> activityPdfImages = [];
+    for (var activityPdfImage in activityImages) {
+      final Uint8List activityImageBytes = await activityPdfImage.readAsBytes();
+      final pw.MemoryImage activityPdf = pw.MemoryImage(activityImageBytes);
+      activityPdfImages
+          .add(activityPdf); // Add the converted MemoryImage to the list
+    }
 
-    final Uint8List attendenceImageBytes = await attendanceImage.readAsBytes();
-    final pw.MemoryImage attendancePdfImage =
-        pw.MemoryImage(attendenceImageBytes);
+    List<pw.MemoryImage> attendancePdfImages = [];
+    for (var attendencePdfImage in attendanceImages) {
+      final Uint8List attendenceImagesBytes =
+          await attendencePdfImage.readAsBytes();
+      final pw.MemoryImage attendencePdf =
+          pw.MemoryImage(attendenceImagesBytes);
+      attendancePdfImages
+          .add(attendencePdf); // Add the converted MemoryImage to the list
+    }
 
     final Uint8List posterImageBytes = await eventPosterImage.readAsBytes();
     final pw.MemoryImage posterPdfImage = pw.MemoryImage(posterImageBytes);
 
     final selectedTypes = getSelectedParticipantTypes();
     final selectedType = selectedTypes.join(', ');
-
-    // Update with actual image URL
-    // final String imageUrl = eventReport.poster; //NOTE: Commented
-
-    // Download the image
-    // final Uint8List posterImageBytes = await _downloadImage(imageUrl); //NOTE: Commented
-    // final pw.MemoryImage posterPdfImage = pw.MemoryImage(posterImageBytes); //NOTE: Commented
 
     final ttf = pw.Font.ttf(await rootBundle.load("fonts/georgia.ttf"));
     final boldTtf = pw.Font.ttf(await rootBundle.load("fonts/georgiab.ttf"));
@@ -2506,192 +2609,312 @@ class _AutoReportState extends State<AutoReport> {
             ),
           ];
         },
+        footer: (pw.Context context) {
+          return pw.Align(
+            alignment: pw.Alignment.bottomRight,
+            child: pw.Text('Generated by Report Rover-v1.0',
+                style: pw.TextStyle(
+                    font: ttf,
+                    fontSize: 8,
+                    color: const PdfColor(0.7, 0.7, 0.7))),
+          );
+        },
       ),
     );
-
     pdf.addPage(
       pw.Page(
         build: (pw.Context context) {
-          return pw.Padding(
-            padding: const pw.EdgeInsets.all(20),
-            child: pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                _buildTextBlock('Event Report',
-                    _eventDescriptionController.text, ttf, boldTtf),
-                _speakerNameControllers.isEmpty
-                    ? pw.SizedBox()
-                    : pw.Text('Speakers Profile',
-                        style: pw.TextStyle(font: boldTtf, fontSize: 14)),
-                pw.SizedBox(height: 8),
-                for (int i = 0; i < _speakerBioControllers.length; i++)
-                  pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      pw.Container(
-                        width: double.infinity,
-                        child: pw.Row(
-                          crossAxisAlignment: pw.CrossAxisAlignment.start,
-                          children: [
-                            pw.Image(pw.MemoryImage(_speakerImages[i]),
-                                height: 150, width: 150),
-                            pw.SizedBox(width: width * 0.05),
-                            pw.Expanded(
-                              child: pw.Text(_speakerBioControllers[i].text,
-                                  textAlign: pw.TextAlign.justify),
+          return pw.Stack(
+            children: [
+              pw.Padding(
+                padding: const pw.EdgeInsets.all(20),
+                child: pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    _buildTextBlock('Event Report',
+                        _eventDescriptionController.text, ttf, boldTtf),
+                    _speakerNameControllers.isEmpty
+                        ? pw.SizedBox()
+                        : pw.Text('Speakers Profile',
+                            style: pw.TextStyle(font: boldTtf, fontSize: 14)),
+                    pw.SizedBox(height: 8),
+                    for (int i = 0; i < _speakerBioControllers.length; i++)
+                      pw.Column(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          pw.Container(
+                            width: double.infinity,
+                            child: pw.Row(
+                              crossAxisAlignment: pw.CrossAxisAlignment.start,
+                              children: [
+                                pw.Image(pw.MemoryImage(_speakerImages[i]),
+                                    height: 150, width: 150),
+                                pw.SizedBox(width: width * 0.05),
+                                pw.Expanded(
+                                  child: pw.Text(_speakerBioControllers[i].text,
+                                      textAlign: pw.TextAlign.justify),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-
-    pdf.addPage(
-      pw.Page(
-        build: (pw.Context context) {
-          return pw.Padding(
-            padding: const pw.EdgeInsets.all(20),
-            child: pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.Text('Geo Tagged Images',
-                    style: pw.TextStyle(
-                      font: boldTtf,
-                      fontSize: 14,
-                    )),
-                pw.SizedBox(height: 12),
-
-                // Dynamically display geo-tagged images
-                ...geoPdfImages.map((geoPdfImage) => pw.Center(
-                      child: pw.Container(
-                        height: 350,
-                        width: double.infinity,
-                        child: pw.Image(
-                          geoPdfImage,
-                          fit: pw.BoxFit
-                              .contain, // Use BoxFit.contain for better scaling
-                        ),
+                          ),
+                        ],
                       ),
-                    )),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-
-    // New page for Activity Image
-    pdf.addPage(
-      pw.Page(
-        build: (pw.Context context) {
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Text('Activity Image',
-                  style: pw.TextStyle(
-                    font: boldTtf,
-                    fontSize: 14,
-                  )),
-              pw.SizedBox(height: 12),
-              pw.Center(
-                  child: pw.SizedBox(
-                height: 350,
-                width: 500,
-                child: pw.Image(
-                  fit: pw.BoxFit.fill,
-                  activityPdfImage,
+                  ],
                 ),
-              )),
+              ),
+              pw.Positioned(
+                bottom: 20,
+                right: 20,
+                child: pw.Text('Generated by Report Rover-v1.0',
+                    style: pw.TextStyle(
+                        font: ttf,
+                        fontSize: 8,
+                        color: const PdfColor(0.7, 0.7, 0.7))),
+              ),
             ],
           );
         },
       ),
     );
 
-    // New page for Feedback Form Image
+    // Page for Geo Tagged Images
     pdf.addPage(
       pw.Page(
         build: (pw.Context context) {
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
+          return pw.Stack(
             children: [
-              pw.Text('Attendence Image',
-                  style: pw.TextStyle(
-                    font: boldTtf,
-                    fontSize: 14,
-                  )),
-              pw.SizedBox(height: 12),
-              pw.Center(
-                  child: pw.SizedBox(
-                height: 350,
-                width: 500,
-                child: pw.Image(
-                  fit: pw.BoxFit.fill,
-                  attendancePdfImage,
+              pw.Padding(
+                padding: const pw.EdgeInsets.all(20),
+                child: pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text('Geo Tagged Images',
+                        style: pw.TextStyle(
+                          font: boldTtf,
+                          fontSize: 14,
+                        )),
+                    pw.SizedBox(height: 12),
+
+                    // Dynamically display geo-tagged images
+                    ...geoPdfImages.map((geoPdfImage) => pw.Center(
+                          child: pw.Container(
+                            margin:
+                                const pw.EdgeInsetsDirectional.only(top: 20),
+                            height: 300,
+                            width: double.infinity,
+                            child: pw.Image(
+                              geoPdfImage,
+                              fit: pw.BoxFit.fill,
+                            ),
+                          ),
+                        )),
+                  ],
                 ),
-              )),
+              ),
+              // Footer at bottom-right
+              pw.Positioned(
+                bottom: 20,
+                right: 20,
+                child: pw.Text('Generated by Report Rover-v1.0',
+                    style: pw.TextStyle(
+                        font: ttf,
+                        fontSize: 8,
+                        color: const PdfColor(0.7, 0.7, 0.7))),
+              ),
             ],
           );
         },
       ),
     );
 
-    // New page for Feedback Form Image
+// Page for Activity Images
     pdf.addPage(
       pw.Page(
         build: (pw.Context context) {
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
+          return pw.Stack(
             children: [
-              pw.Text('FeedBack Form Image',
-                  style: pw.TextStyle(
-                    font: boldTtf,
-                    fontSize: 14,
-                  )),
-              pw.SizedBox(height: 12),
-              pw.Center(
-                  child: pw.SizedBox(
-                height: 350,
-                width: 500,
-                child: pw.Image(
-                  fit: pw.BoxFit.fill,
-                  feedbackPdfImage,
+              pw.Padding(
+                padding: const pw.EdgeInsets.all(20),
+                child: pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text('Activity Images',
+                        style: pw.TextStyle(
+                          font: boldTtf,
+                          fontSize: 14,
+                        )),
+                    pw.SizedBox(height: 12),
+
+                    // Dynamically display activity images
+                    ...activityPdfImages.map((activityPdfImage) => pw.Center(
+                          child: pw.Container(
+                            margin:
+                                const pw.EdgeInsetsDirectional.only(top: 20),
+                            height: 300,
+                            width: double.infinity,
+                            child: pw.Image(
+                              activityPdfImage,
+                              fit: pw.BoxFit.fill,
+                            ),
+                          ),
+                        )),
+                  ],
                 ),
-              )),
+              ),
+              // Footer at bottom-right
+              pw.Positioned(
+                bottom: 0,
+                right: 20,
+                child: pw.Text('Generated by Report Rover-v1.0',
+                    style: pw.TextStyle(
+                        font: ttf,
+                        fontSize: 8,
+                        color: const PdfColor(0.7, 0.7, 0.7))),
+              ),
             ],
           );
         },
       ),
     );
 
-    // New page for Event Poster
+// Page for Attendance Images
     pdf.addPage(
       pw.Page(
         build: (pw.Context context) {
-          return pw.Column(
+          return pw.Stack(
             children: [
-              pw.Text('Event Poster',
-                  textAlign: pw.TextAlign.start,
-                  style: pw.TextStyle(
-                    font: boldTtf,
-                    fontSize: 14,
-                  )),
-              pw.SizedBox(height: 12),
-              pw.Center(
-                  child: pw.SizedBox(
-                height: 600,
-                width: 500,
-                child: pw.Image(
-                  fit: pw.BoxFit.fill,
-                  posterPdfImage,
+              pw.Padding(
+                padding: const pw.EdgeInsets.all(20),
+                child: pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text('Attendance Images',
+                        style: pw.TextStyle(
+                          font: boldTtf,
+                          fontSize: 14,
+                        )),
+                    pw.SizedBox(height: 12),
+
+                    // Dynamically display attendance images
+                    ...attendancePdfImages
+                        .map((attendancePdfImage) => pw.Center(
+                              child: pw.Container(
+                                margin: const pw.EdgeInsetsDirectional.only(
+                                    top: 20),
+                                height: 300,
+                                width: double.infinity,
+                                child: pw.Image(
+                                  attendancePdfImage,
+                                  fit: pw.BoxFit.fill,
+                                ),
+                              ),
+                            )),
+                  ],
                 ),
-              )),
+              ),
+              // Footer at bottom-right
+              pw.Positioned(
+                bottom: 0,
+                right: 20,
+                child: pw.Text('Generated by Report Rover-v1.0',
+                    style: pw.TextStyle(
+                        font: ttf,
+                        fontSize: 8,
+                        color: const PdfColor(0.7, 0.7, 0.7))),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+
+// Page for Feedback Form Image
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          return pw.Stack(
+            children: [
+              pw.Padding(
+                padding: const pw.EdgeInsets.all(20),
+                child: pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text('Feedback Form Images',
+                        style: pw.TextStyle(
+                          font: boldTtf,
+                          fontSize: 14,
+                        )),
+                    pw.SizedBox(height: 12),
+
+                    // Dynamically display feedback form images
+                    ...feedbackAnalysisPdfImages
+                        .map((feedbackPdfImage) => pw.Center(
+                              child: pw.Container(
+                                margin: const pw.EdgeInsetsDirectional.only(
+                                    top: 20),
+                                height: 300,
+                                width: double.infinity,
+                                child: pw.Image(
+                                  feedbackPdfImage,
+                                  fit: pw.BoxFit.fill,
+                                ),
+                              ),
+                            )),
+                  ],
+                ),
+              ),
+              // Footer at bottom-right
+              pw.Positioned(
+                bottom: 0,
+                right: 20,
+                child: pw.Text('Generated by Report Rover-v1.0',
+                    style: pw.TextStyle(
+                        font: ttf,
+                        fontSize: 8,
+                        color: const PdfColor(0.7, 0.7, 0.7))),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+
+// Page for Event Poster
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          return pw.Stack(
+            children: [
+              pw.Column(
+                children: [
+                  pw.Text('Event Poster',
+                      textAlign: pw.TextAlign.start,
+                      style: pw.TextStyle(
+                        font: boldTtf,
+                        fontSize: 14,
+                      )),
+                  pw.SizedBox(height: 12),
+                  pw.Center(
+                      child: pw.SizedBox(
+                    height: 600,
+                    width: 500,
+                    child: pw.Image(
+                      fit: pw.BoxFit.fill,
+                      posterPdfImage,
+                    ),
+                  )),
+                ],
+              ),
+              // Footer at bottom-right
+              pw.Positioned(
+                bottom: 0,
+                right: 20,
+                child: pw.Text('Generated by Report Rover-v1.0',
+                    style: pw.TextStyle(
+                        font: ttf,
+                        fontSize: 8,
+                        color: const PdfColor(0.7, 0.7, 0.7))),
+              ),
             ],
           );
         },
@@ -2738,7 +2961,7 @@ class _AutoReportState extends State<AutoReport> {
       );
 
       // Add a 5-second delay after PDF creation
-      await Future.delayed(const Duration(seconds: 3));
+      await Future.delayed(const Duration(seconds: 2));
 
       // Perform the PDF layout operation
       await Printing.layoutPdf(
