@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
     final theme = AppTheme();
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Report Rover',
       theme: theme.light,
       home: const Devices(),
     );
