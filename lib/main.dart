@@ -1,12 +1,16 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:get/get.dart';
 import 'package:report/devices.dart';
+import 'package:report/firebase_options.dart';
 import 'theme/app_theme.dart';
 
-void main() {
+void main() async {
   Gemini.init(apiKey: "AIzaSyD7DgQxEfrw4T6U_C8M67FNk8J_Rka4i5E");
-
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
