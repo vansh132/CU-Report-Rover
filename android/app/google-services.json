@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "67013281323",
-    "project_id": "eventquest-1c0af",
-    "storage_bucket": "eventquest-1c0af.appspot.com"
+    "project_number": "32540171705",
+    "project_id": "report-rover-fe0b1",
+    "storage_bucket": "report-rover-fe0b1.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:67013281323:android:413e64edf67e5f9aca8c6e",
+        "mobilesdk_app_id": "1:32540171705:android:2310bf0b7041ddc73caa68",
         "android_client_info": {
           "package_name": "com.example.report"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDOOxe5-GVCkClcHI_iuC0TE41nQtHg9qY"
+          "current_key": "AIzaSyBQMd5FMCMt1D94_G1ILj7a0eDYb-6dgGU"
         }
       ],
       "services": {

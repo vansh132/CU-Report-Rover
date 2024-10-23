@@ -41,48 +41,49 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDECOS4-ABk8_2uHlJYtyTN8SmQlbSogA4',
-    appId: '1:67013281323:web:0cd2272a42721c1cca8c6e',
-    messagingSenderId: '67013281323',
-    projectId: 'eventquest-1c0af',
-    authDomain: 'eventquest-1c0af.firebaseapp.com',
-    storageBucket: 'eventquest-1c0af.appspot.com',
-    measurementId: 'G-F36HQ2LHCX',
+    apiKey: 'AIzaSyA_UzHec4h9urDK7cCjVqBsTI4ONZfckw0',
+    appId: '1:32540171705:web:4e2d0009674287483caa68',
+    messagingSenderId: '32540171705',
+    projectId: 'report-rover-fe0b1',
+    authDomain: 'report-rover-fe0b1.firebaseapp.com',
+    storageBucket: 'report-rover-fe0b1.appspot.com',
+    measurementId: 'G-3HZ7MY3614',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDOOxe5-GVCkClcHI_iuC0TE41nQtHg9qY',
-    appId: '1:67013281323:android:413e64edf67e5f9aca8c6e',
-    messagingSenderId: '67013281323',
-    projectId: 'eventquest-1c0af',
-    storageBucket: 'eventquest-1c0af.appspot.com',
+    apiKey: 'AIzaSyBQMd5FMCMt1D94_G1ILj7a0eDYb-6dgGU',
+    appId: '1:32540171705:android:2310bf0b7041ddc73caa68',
+    messagingSenderId: '32540171705',
+    projectId: 'report-rover-fe0b1',
+    storageBucket: 'report-rover-fe0b1.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAwVUNuGbDZ7qUAOKddGnd0mv2ivGO19Ac',
-    appId: '1:67013281323:ios:e206510295038cf1ca8c6e',
-    messagingSenderId: '67013281323',
-    projectId: 'eventquest-1c0af',
-    storageBucket: 'eventquest-1c0af.appspot.com',
+    apiKey: 'AIzaSyAHrY9VZEEdxEMhrlUZAxAhIaKHO_oR1w0',
+    appId: '1:32540171705:ios:62fdd2706cf3771b3caa68',
+    messagingSenderId: '32540171705',
+    projectId: 'report-rover-fe0b1',
+    storageBucket: 'report-rover-fe0b1.appspot.com',
     iosBundleId: 'com.example.report',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyAwVUNuGbDZ7qUAOKddGnd0mv2ivGO19Ac',
-    appId: '1:67013281323:ios:e206510295038cf1ca8c6e',
-    messagingSenderId: '67013281323',
-    projectId: 'eventquest-1c0af',
-    storageBucket: 'eventquest-1c0af.appspot.com',
+    apiKey: 'AIzaSyAHrY9VZEEdxEMhrlUZAxAhIaKHO_oR1w0',
+    appId: '1:32540171705:ios:62fdd2706cf3771b3caa68',
+    messagingSenderId: '32540171705',
+    projectId: 'report-rover-fe0b1',
+    storageBucket: 'report-rover-fe0b1.appspot.com',
     iosBundleId: 'com.example.report',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyDECOS4-ABk8_2uHlJYtyTN8SmQlbSogA4',
-    appId: '1:67013281323:web:e6fd7a4c70389f9bca8c6e',
-    messagingSenderId: '67013281323',
-    projectId: 'eventquest-1c0af',
-    authDomain: 'eventquest-1c0af.firebaseapp.com',
-    storageBucket: 'eventquest-1c0af.appspot.com',
-    measurementId: 'G-2RK09P01SZ',
+    apiKey: 'AIzaSyA_UzHec4h9urDK7cCjVqBsTI4ONZfckw0',
+    appId: '1:32540171705:web:8a5525a33aa1e1053caa68',
+    messagingSenderId: '32540171705',
+    projectId: 'report-rover-fe0b1',
+    authDomain: 'report-rover-fe0b1.firebaseapp.com',
+    storageBucket: 'report-rover-fe0b1.appspot.com',
+    measurementId: 'G-V7W211PYGF',
   );
+
 }

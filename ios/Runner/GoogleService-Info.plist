@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyAwVUNuGbDZ7qUAOKddGnd0mv2ivGO19Ac</string>
+	<string>AIzaSyAHrY9VZEEdxEMhrlUZAxAhIaKHO_oR1w0</string>
 	<key>GCM_SENDER_ID</key>
-	<string>67013281323</string>
+	<string>32540171705</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.example.report</string>
 	<key>PROJECT_ID</key>
-	<string>eventquest-1c0af</string>
+	<string>report-rover-fe0b1</string>
 	<key>STORAGE_BUCKET</key>
-	<string>eventquest-1c0af.appspot.com</string>
+	<string>report-rover-fe0b1.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:67013281323:ios:e206510295038cf1ca8c6e</string>
+	<string>1:32540171705:ios:62fdd2706cf3771b3caa68</string>
 </dict>
 </plist>
