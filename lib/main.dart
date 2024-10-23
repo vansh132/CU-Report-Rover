@@ -7,7 +7,7 @@ import 'package:report/firebase_options.dart';
 import 'theme/app_theme.dart';
 
 void main() async {
-  Gemini.init(apiKey: "AIzaSyD7DgQxEfrw4T6U_C8M67FNk8J_Rka4i5E");
+  Gemini.init(apiKey: "AIzaSyDAG8-2yhi-Qp2bkzodeo8tk0_9QZXgnxA");
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
