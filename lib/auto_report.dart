@@ -12,6 +12,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:printing/printing.dart';
+import 'package:report/services/auth_services.dart';
 
 class AutoReport extends StatefulWidget {
   const AutoReport({super.key});
@@ -21,6 +22,13 @@ class AutoReport extends StatefulWidget {
 }
 
 class _AutoReportState extends State<AutoReport> {
+  AuthServices authServices = AuthServices();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   final gemini = Gemini.instance;
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
