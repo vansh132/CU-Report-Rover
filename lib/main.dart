@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:get/get.dart';
 import 'package:report/devices.dart';
@@ -7,7 +8,9 @@ import 'package:report/firebase_options.dart';
 import 'theme/app_theme.dart';
 
 void main() async {
-  Gemini.init(apiKey: "AIzaSyDAG8-2yhi-Qp2bkzodeo8tk0_9QZXgnxA");
+  await dotenv.load(fileName: ".env");
+  String geminiKey = dotenv.env['GEMINI_API_KEY'] ?? "";
+  Gemini.init(apiKey: geminiKey);
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
