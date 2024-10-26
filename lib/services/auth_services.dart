@@ -14,18 +14,18 @@ class AuthServices {
     return true;
   }
 
-  void readData() async {
+  Future<void> readData(String username, String password) async {
     CollectionReference users = FirebaseFirestore.instance.collection('users');
 
     // Retrieve all documents in the 'users' collection
     QuerySnapshot querySnapshot = await users.get();
     for (var doc in querySnapshot.docs) {
-      print(
-          'username: ${doc['username']}, password: ${doc['password']}, count: ${doc['count']}');
+      if (doc['username'] == username && doc['password'] == password) {
+        print('User found');
+        return;
+      }
     }
 
-    // Retrieve a specific document
-    DocumentSnapshot documentSnapshot = await users.doc('documentId').get();
-    print(documentSnapshot);
+    print('User not found');
   }
 }
