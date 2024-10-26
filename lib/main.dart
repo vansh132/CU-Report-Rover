@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:get/get.dart';
-import 'package:report/devices.dart';
+import 'package:report/pages/devices.dart';
 import 'package:report/firebase_options.dart';
 import 'theme/app_theme.dart';
 
